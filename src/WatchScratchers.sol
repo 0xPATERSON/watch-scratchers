@@ -36,12 +36,26 @@
                     ██████░░░░░░░░░░░░░░░░░░▒▒██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████                            
                           ██████████████████████▒▒▒▒▒▒▒▒████████                                
                                                 ████████                                        
-                                                                                                
-                                                                                       
+
+I found this on Google.
+
+0xPATERSON
+April 5, 2022.                                             
 */
 
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.10;
 
 import {ERC721A} from 'ERC721A/contracts/ERC721A.sol';
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
+contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
+    /*
+        Every Rolex is photographed at 31 seconds past 10:10.
+        If it has a date, it is set to the 28th,
+        and if it has a day, it is always Monday.
+    */
+
+    
+}
