@@ -37,7 +37,10 @@
                           ██████████████████████▒▒▒▒▒▒▒▒████████                                
                                                 ████████                                        
 
-^I found this on Google.
+
+Every Rolex is photographed at 31 seconds past 10:10.
+If it has a date, it is set to the 28th,
+and if it has a day, it is always Monday.
 
 0xPATERSON
 April 5, 2022.                                             
@@ -54,64 +57,216 @@ import {IWatchScratchers} from "./IWatchScratchers.sol";
 import "./WatchScratchersLibrary.sol";
 
 contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
-    mapping(uint256 => IWatchScratchers.WatchScratcher) watchScratchers;
-    address public renderingContractAddress;
-    uint256 private constant MAX_SUPPLY = 5000;
-    uint256 private constant MINT_PRICE = 0.04 ether;
-    uint256 private constant MAX_PER_ADDRESS = 10;
-
-
-    event TickTickTickTick();
-
+    /*==============================================================
+    ==                        Custom Errors                       ==
+    ==============================================================*/
+    
+    error CallerIsContract();
+    error InvalidSignature();
+    error MintNotActive();
     error MintTooMany();
     error MintNotAuthorized();
     error MintMaxSupplyReached();
     error PaymentAmountInvalid();
 
-    modifier onlyIfPaymentAmountValid(uint256 value) {
-        if (msg.value != value) revert PaymentAmountInvalid();
-        _;
-    }
+    event TickTickTickTick();
 
-    modifier onlyIfStillHasSupply() {
-        if (_currentIndex > MAX_SUPPLY) revert MintMaxSupplyReached();
-        _;
-    }
-    
+    uint256 private constant MAX_SUPPLY = 5711;
+    uint256 private constant MINT_PRICE = 0.04 ether;
+    uint256 private constant WATCH_CLUB_MINT_PRICE = 0.00 ether;
+    uint256 private constant MAX_PER_ADDRESS = 10;
+
+    uint256 public constant BIT_MASK_LENGTH = 14;
+    uint256 public constant BIT_MASK = 2**BIT_MASK_LENGTH - 1;
+
+    // for pseudo-rng
+    uint256 private _seed;
+    uint256 private _totalSupply;
+
+    address private _allowlist_signer;
+    address private _watch_club_signer;
+    bool public mintIsActive;
+    bool public allowListMintIsActive;
+    bool public watchClubMintIsActive;
+
+    address public watchScratchersRenderer;
+
+    // tokenId to dna
+    mapping(uint256 => uint256) public dna;
+
+    mapping(address => uint256) private allowListMintCountPerAddress;
+    mapping(address => uint256) private watchClubMintCountPerAddress;
+
     constructor() ERC721A("Watch Scratchers", "WATCH") {
-        /*
-            Every Rolex is photographed at 31 seconds past 10:10.
-            If it has a date, it is set to the 28th,
-            and if it has a day, it is always Monday.
-        */
         emit TickTickTickTick();
     }
-    
-    function mint(uint256 amount) 
-        external 
-        payable 
-        nonReentrant 
-        onlyIfStillHasSupply 
-        onlyIfPaymentAmountValid(MINT_PRICE * amount) 
-    {
-        // check for amount exceeding max supply
-        if (amount > MAX_PER_ADDRESS) revert MintTooMany();
-        if (tx.origin != msg.sender) revert MintNotAuthorized();
 
-        uint256 tokenId = _currentIndex;
-        IWatchScratchers.WatchScratcher memory watchScratcher;
-        watchScratcher.configuration = uint256(keccak256(abi.encodePacked(
-                tokenId,
-                msg.sender,
-                block.difficulty,
-                block.timestamp
-            )));
-        _safeMint(msg.sender, amount);
-        watchScratchers[tokenId] = watchScratcher;
+
+    /**
+     * @notice public mint
+     * @param quantity max 10
+     */
+    function publicMint(uint256 quantity) external payable {
+        uint256 currentSupply = _totalSupply;
+        if (tx.origin != msg.sender) revert CallerIsContract();
+        if (!mintIsActive) revert MintNotActive();
+        if (currentSupply + quantity > MAX_SUPPLY) revert MintMaxSupplyReached();
+        if (quantity > 10) revert MintTooMany();
+        if (quantity * MINT_PRICE != msg.value) revert PaymentAmountInvalid();
+
+        unchecked {
+            uint256 i;
+            for (; i < quantity; ) {
+                mint(currentSupply++);
+                ++i;
+            }
+        }
+        _totalSupply = currentSupply;
+    }
+
+    /**
+     * @notice allowlist mint
+     * @param signature signature used for verification
+     * @param quantity max 10
+     */
+    function allowListMint(bytes calldata signature, uint256 quantity) external payable {
+        uint256 currentSupply = _totalSupply;
+        if (tx.origin != msg.sender) revert CallerIsContract();
+        if (!allowListMintIsActive) revert MintNotActive();
+        if (currentSupply + quantity > MAX_SUPPLY) revert MintMaxSupplyReached();
+        if (msg.value != MINT_PRICE) revert PaymentAmountInvalid();
+        if (quantity > 10 || allowListMintCountPerAddress[msg.sender] > MAX_PER_ADDRESS) revert MintTooMany();
+        if (
+            !verify(
+                getMessageHash(msg.sender, 1, 0),
+                signature,
+                _allowlist_signer
+            )
+        ) revert InvalidSignature();
+
+        unchecked {
+            allowListMintCountPerAddress[msg.sender] += quantity;
+            uint256 i;
+            for (; i < quantity; ) {
+                mint(currentSupply++);
+                ++i;
+            }
+        }
+
+        _totalSupply = currentSupply;
+    }
+
+    /**
+     * @notice azuki watch club mints for free. 1 per address.
+     * @param signature signature used for verification
+     */
+    function watchClubMint(bytes calldata signature, uint256 quantity) external payable {
+        uint256 currentSupply = _totalSupply;
+        if (tx.origin != msg.sender) revert CallerIsContract();
+        if (!allowListMintIsActive) revert MintNotActive();
+        if (currentSupply + 1 > MAX_SUPPLY) revert MintMaxSupplyReached();
+        if (msg.value != WATCH_CLUB_MINT_PRICE) revert PaymentAmountInvalid();
+        if (watchClubMintCountPerAddress[msg.sender] > 0) revert WalletAlreadyMinted();
+
+        if (
+            !verify(
+                getMessageHash(msg.sender, 1, 0),
+                signature,
+                _allowlist_signer
+            )
+        ) revert InvalidSignature();
+
+        watchClubMintCountPerAddress[msg.sender] = 1;
+
+        unchecked {
+            mint(currentSupply++);
+        }
+
+        _totalSupply = currentSupply;
+    }
+
+
+    function mint(uint256 tokenId) internal {
+        unchecked {
+            dna[tokenId] = setDna(
+                uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            tokenId,
+                            block.coinbase,
+                            block.timestamp,
+                            _seed++
+                        )
+                    )
+                ),
+                0 // random watch
+            );
+        }
+        _mint(msg.sender, tokenId);
     }
 
     function tokenURI(uint256 _tokenId) public view virtual override returns (string memory) {
     }
 
+    function setDna(uint256 scrollDna, uint256 watch)
+        internal
+        pure
+        returns (uint256)
+    {
+        uint256 newBitMask = ~(BIT_MASK <<
+            (BIT_MASK_LENGTH * CC0_TRAIT_MULTIPLE));
+        return
+            (scrollDna & newBitMask) |
+            (cc0TraitIndex << (BIT_MASK_LENGTH * CC0_TRAIT_MULTIPLE));
+    }
 
+    function setWatchScratchersRenderer(address _watchScratchersRenderer) external onlyOwner {
+        watchScratchersRenderer = _watchScratchersRenderer;
+    }
+
+    function setAllowlistSigner(address signer) external onlyOwner {
+        _allowlist_signer = signer;
+    }
+
+    function flipMint() external onlyOwner {
+        mintIsActive = !mintIsActive;
+    }
+
+    function flipAllowListMint() external onlyOwner {
+        allowListMintIsActive = !allowListMintIsActive;
+    }
+
+    function flipWatchClubMint() external onlyOwner {
+        watchClubMintIsActive = !watchClubMintIsActive;
+    }
+
+    function setSeed(uint256 seed) external onlyOwner {
+        _seed = seed;
+    }
+
+    function withdraw() external onlyOwner {
+        uint256 balance = address(this).balance;
+        payable(msg.sender).transfer(balance);
+    }
+
+    /*==============================================================
+    ==                     Sig Verification                       ==
+    ==============================================================*/
+
+    function verify(
+        bytes32 messageHash,
+        bytes memory signature,
+        address _signer
+    ) internal pure returns (bool) {
+        return
+            messageHash.toEthSignedMessageHash().recover(signature) == _signer;
+    }
+
+    function getMessageHash(
+        address account,
+        uint256 quantity,
+        uint256 cc0TraitIndex
+    ) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(account, quantity, cc0TraitIndex));
+    }
 }
