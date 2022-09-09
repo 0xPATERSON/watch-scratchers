@@ -46,17 +46,19 @@ and if it has a day, it is always Monday.
 April 5, 2022.                                             
 */
 
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-import {ERC721A} from "ERC721A/contracts/ERC721A.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import {IWatchScratchers} from "./IWatchScratchers.sol";
 import "./WatchScratchersLibrary.sol";
 
-contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
+contract WatchScratchers is ERC721, Ownable, ReentrancyGuard {
+    using ECDSA for bytes32;
     /*==============================================================
     ==                        Custom Errors                       ==
     ==============================================================*/
@@ -73,11 +75,14 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
 
     uint256 private constant MAX_SUPPLY = 5711;
     uint256 private constant MINT_PRICE = 0.04 ether;
+    uint256 private constant MINT_PRICE_CHOOSE_WATCH = 0.08 ether;
     uint256 private constant WATCH_CLUB_MINT_PRICE = 0.00 ether;
     uint256 private constant MAX_PER_ADDRESS = 10;
 
     uint256 public constant BIT_MASK_LENGTH = 14;
     uint256 public constant BIT_MASK = 2**BIT_MASK_LENGTH - 1;
+    // watch trait lies on the 9th slot
+    uint256 private constant WATCH_TRAIT_MULTIPLE = 9;
 
     // for pseudo-rng
     uint256 private _seed;
@@ -97,7 +102,7 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
     mapping(address => uint256) private allowListMintCountPerAddress;
     mapping(address => uint256) private watchClubMintCountPerAddress;
 
-    constructor() ERC721A("Watch Scratchers", "WATCH") {
+    constructor() ERC721("Watch Scratchers", "WATCH") {
         emit TickTickTickTick();
     }
 
@@ -117,9 +122,26 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
         unchecked {
             uint256 i;
             for (; i < quantity; ) {
-                mint(currentSupply++);
+                mint(currentSupply++, 0);
                 ++i;
             }
+        }
+        _totalSupply = currentSupply;
+    }
+
+    /**
+     * @notice mint where you can choose which watch you want
+     * @param watch self-explanatory, the watch
+     */
+    function chooseWatchMint(uint256 watch) external payable {
+        uint256 currentSupply = _totalSupply;
+        if (tx.origin != msg.sender) revert CallerIsContract();
+        if (!mintIsActive) revert MintNotActive();
+        if (currentSupply + 1 > MAX_SUPPLY) revert MintMaxSupplyReached();
+        if (MINT_PRICE_CHOOSE_WATCH != msg.value) revert PaymentAmountInvalid();
+
+        unchecked {
+            mint(currentSupply++, watch);
         }
         _totalSupply = currentSupply;
     }
@@ -148,7 +170,7 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
             allowListMintCountPerAddress[msg.sender] += quantity;
             uint256 i;
             for (; i < quantity; ) {
-                mint(currentSupply++);
+                mint(currentSupply++, 0);
                 ++i;
             }
         }
@@ -160,13 +182,13 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
      * @notice azuki watch club mints for free. 1 per address.
      * @param signature signature used for verification
      */
-    function watchClubMint(bytes calldata signature, uint256 quantity) external payable {
+    function watchClubMint(bytes calldata signature) external payable {
         uint256 currentSupply = _totalSupply;
         if (tx.origin != msg.sender) revert CallerIsContract();
         if (!allowListMintIsActive) revert MintNotActive();
         if (currentSupply + 1 > MAX_SUPPLY) revert MintMaxSupplyReached();
         if (msg.value != WATCH_CLUB_MINT_PRICE) revert PaymentAmountInvalid();
-        if (watchClubMintCountPerAddress[msg.sender] > 0) revert WalletAlreadyMinted();
+        if (watchClubMintCountPerAddress[msg.sender] > 0) revert MintTooMany();
 
         if (
             !verify(
@@ -179,14 +201,14 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
         watchClubMintCountPerAddress[msg.sender] = 1;
 
         unchecked {
-            mint(currentSupply++);
+            mint(currentSupply++, 0);
         }
 
         _totalSupply = currentSupply;
     }
 
 
-    function mint(uint256 tokenId) internal {
+    function mint(uint256 tokenId, uint256 watch) internal {
         unchecked {
             dna[tokenId] = setDna(
                 uint256(
@@ -199,7 +221,7 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
                         )
                     )
                 ),
-                0 // random watch
+                watch
             );
         }
         _mint(msg.sender, tokenId);
@@ -213,12 +235,19 @@ contract WatchScratchers is ERC721A, Ownable, ReentrancyGuard {
         pure
         returns (uint256)
     {
+        if (watch == 0) {
+          return scrollDna;
+        }
         uint256 newBitMask = ~(BIT_MASK <<
-            (BIT_MASK_LENGTH * CC0_TRAIT_MULTIPLE));
+            (BIT_MASK_LENGTH * WATCH_TRAIT_MULTIPLE));
         return
             (scrollDna & newBitMask) |
-            (cc0TraitIndex << (BIT_MASK_LENGTH * CC0_TRAIT_MULTIPLE));
+            (watch << (BIT_MASK_LENGTH * WATCH_TRAIT_MULTIPLE));
     }
+
+    /*==============================================================
+    ==                    Only Owner Functions                    ==
+    ==============================================================*/
 
     function setWatchScratchersRenderer(address _watchScratchersRenderer) external onlyOwner {
         watchScratchersRenderer = _watchScratchersRenderer;
