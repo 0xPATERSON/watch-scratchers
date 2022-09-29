@@ -137,7 +137,7 @@ library WatchScratchersLibrary {
         ));
     }
 
-    enum HandTypes {R_DRESS, O_DRESS, ROUND, SPORT, F_TANK, SENATOR }
+    enum HandTypes {R_DRESS, O_DRESS, ROUND, SPORT, F_TANK, TANK, SENATOR }
 
     // Returns SVG of the watch hands, with a trailing space
     function _renderHands(
@@ -171,6 +171,9 @@ library WatchScratchersLibrary {
             svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="30" y2="50"/> </g> <g class="hand minute-hand"> <line class="hand-outer" x1="50" x2="50" y1="20" y2="50"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> </g> </svg> ';
         } else if (handType == HandTypes.SENATOR) {
             svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="20" y2="50"/> </g> <g class="hand minute-hand"> <line class="hand-outer" x1="50" x2="50" y1="12" y2="50"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> <g class="hand second-hand"> <line x1="50" x2="50" y1="10" y2="65"/> <circle cx="50" cy="50" r="3"/> <circle cx="50" cy="65" r="2"/> </g> </g> </svg> ';
+        } else {
+            // TANK
+            svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="20" y2="50"/> </g> <g class="hand minute-hand"> <line class="hand-outer" x1="50" x2="50" y1="10" y2="50"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> <g class="hand second-hand"> <line x1="50" x2="50" y1="10" y2="60"/> <circle cx="50" cy="50" r="1.5"/> </g> </g> </svg>';
         }
         string memory output = string(abi.encodePacked( // 12
             svgParts[0],
