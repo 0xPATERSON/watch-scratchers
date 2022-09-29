@@ -37,7 +37,6 @@
                           ██████████████████████▒▒▒▒▒▒▒▒████████                                
                                                 ████████                                        
 
-
 Every Rolex is photographed at 31 seconds past 10:10.
 If it has a date, it is set to the 28th,
 and if it has a day, it is always Monday.
