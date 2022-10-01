@@ -53,7 +53,6 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-import {IWatchScratchers} from "./IWatchScratchers.sol";
 import "./WatchScratchersLibrary.sol";
 
 contract WatchScratchers is ERC721, Ownable, ReentrancyGuard {

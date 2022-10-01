@@ -1,7 +1,6 @@
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-import {IWatchScratchers} from "./IWatchScratchers.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 library WatchScratchersLibrary {
@@ -19,6 +18,8 @@ library WatchScratchersLibrary {
         I think i'll use 1000 and shift 10
     */
     uint256 public constant NUM_TRAITS = 6;
+
+    enum HandTypes {R_DRESS, O_DRESS, ROUND, SPORT, TANK_F, TANK, SENATOR }
 
     // Replaces all occurances of _oldValue with _newValue in _string. _oldValue and _newValue will always be length 7.
     function _colorReplace(string memory _string, string memory _oldValue, string memory _newValue) public pure returns (string memory) {
@@ -137,8 +138,6 @@ library WatchScratchersLibrary {
         ));
     }
 
-    enum HandTypes {R_DRESS, O_DRESS, ROUND, SPORT, F_TANK, TANK, SENATOR }
-
     // Returns SVG of the watch hands, with a trailing space
     function _renderHands(
         string memory viewBox,
@@ -167,7 +166,7 @@ library WatchScratchersLibrary {
             svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="25" y2="50"/> <line class="hand-inner" x1="50" x2="50" y1="25" y2="50"/> </g> <g class="hand minute-hand"> <line class="hand hand-outer" x1="50" x2="50" y1="15" y2="50"/> <line class="hand-inner" x1="50" x2="50" y1="15" y2="50"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> <g class="hand second-hand"> <line x1="50" x2="50" y1="10" y2="65"/> <circle cx="50" cy="50" r="1.5"/> </g> </g> </svg> ';
         } else if (handType == HandTypes.O_DRESS) {
             svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="25" y2="50"/> <line class="hand-inner" x1="50" x2="50" y1="27" y2="48"/> </g> <g class="hand minute-hand"> <line class="hand-outer" x1="50" x2="50" y1="15" y2="50"/> <line class="hand-inner" x1="50" x2="50" y1="17" y2="48"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> <g class="hand second-hand"> <line x1="50" x2="50" y1="10" y2="65"/> <circle cx="50" cy="50" r="3"/> </g> </g> </svg> ';
-        } else if (handType == HandTypes.F_TANK) {
+        } else if (handType == HandTypes.TANK_F) {
             svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="30" y2="50"/> </g> <g class="hand minute-hand"> <line class="hand-outer" x1="50" x2="50" y1="20" y2="50"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> </g> </svg> ';
         } else if (handType == HandTypes.SENATOR) {
             svgParts[5] = '</style> <g> <g class="hand hour-hand"> <line class="hand-outer" x1="50" x2="50" y1="20" y2="50"/> </g> <g class="hand minute-hand"> <line class="hand-outer" x1="50" x2="50" y1="12" y2="50"/> </g> <circle class="circle" cx="50" cy="50" r="3"/> <g class="hand second-hand"> <line x1="50" x2="50" y1="10" y2="65"/> <circle cx="50" cy="50" r="3"/> <circle cx="50" cy="65" r="2"/> </g> </g> </svg> ';
