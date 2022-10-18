@@ -42,7 +42,7 @@ contract WatchScratchersRenderer is Ownable {
 }
 
     // Replaces all occurances of _oldValue with _newValue in _string. _oldValue and _newValue will always be length 7.
-    function _colorReplace(string memory _string, WatchType watchType) public payable returns (string memory) {
+    function _colorReplace(string memory _string, WatchType watchType) public view returns (string memory) {
         bytes memory _stringBytes = bytes(_string);
         bytes memory resultBytes = new bytes(_stringBytes.length);
         
@@ -210,14 +210,15 @@ contract WatchScratchersRenderer is Ownable {
         string memory watchCase = IWatchScratchersWatchCaseRenderer(
             caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.PP]
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.PP);
-        string memory watchHands = _renderHands('0 0 2200 2200', '155.8', '311.4', '#000000', '#000000', '#fefefd', 234, 342, 57, HandType.ROUND);
-        if (watchType == WatchType.PP_TIFFANY) {
-            return string(abi.encodePacked(caseSvgStart, watchCase, caseSvgEnd, watchHands));
-        } else if (watchType == WatchType.PP_GREEN) {
-            // return _colorReplace(watchCase, WatchType.PP_GREEN);
-        } else if (watchType == WatchType.PP_BLUE) {
-            // return _colorReplace(watchCase, WatchType.PP_BLUE);
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.PP_TIFFANY || watchType == WatchType.PP_WHITE) {
+            watchHands = _renderHands('0 0 2200 2200', '155.8', '311.4', '#041418', '#041418', '#fefefd', 234, 342, 57, HandType.ROUND);
+        } else if (watchType == WatchType.PP_GREEN || watchType == WatchType.PP_BLUE) {
+            watchHands = _renderHands('0 0 2200 2200', '155.8', '311.4', '#B4B8B2', '#B4B8B2', '#fefefd', 234, 342, 57, HandType.ROUND); 
+        } else if (watchType == WatchType.PP_CHOCOLATE) {
+            watchHands = _renderHands('0 0 2200 2200', '155.8', '311.4', '#EFCCAC', '#EFCCAC', '#fefefd', 234, 342, 57, HandType.ROUND);
         }
-        return '';
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
     }
 }
