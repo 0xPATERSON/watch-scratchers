@@ -9,7 +9,38 @@ contract WatchScratchersRenderer is Ownable {
     
     constructor() {}
     enum HandType {DRESS_ROLEX, DRESS, ROUND, SPORT, TANK_F, TANK, SENATOR }
-    enum WatchType { PP_TIFFANY, PP_BLUE, PP_GREEN, PP_WHITE, PP_CHOCOLATE, AP_WHITE, AP_BLUE, AP_GREY, AP_BLACK, AP_BLUE_RG, AP_BLACK_RG, AP_BLUE_YG }
+    enum WatchType { 
+        // 0
+        PP_TIFFANY, PP_BLUE, PP_GREEN, PP_WHITE, PP_CHOCOLATE,
+        // 5
+        AP_WHITE, AP_BLUE, AP_GREY, AP_BLACK, AP_BLUE_RG, AP_BLACK_RG, AP_BLUE_YG,
+        // 12
+        VC_BLUE, VC_BLACK, VC_WHITE, VC_BLUE_RG,
+        // 16
+        SUB_BLACK, SUB_GREEN, SUB_BLUE, SUB_GREEN_BLACK, SUB_BLUE_BLACK, SUB_BLACK_TT, SUB_BLUE_TT, SUB_BLACK_YG, SUB_BLUE_YG,
+        // 25
+        YACHT_RHODIUM, YACHT_BLUE,
+        // 27
+        OP_YELLOW, OP_GREEN, OP_CORAL, OP_TIFFANY, OP_PINK, OP_BLACK, OP_BLUE,
+        // 34
+        DJ_WHITE, DJ_BLUE, DJ_RHODIUM, DJ_BLACK, DJ_WHITE_TT, DJ_RHODIUM_TT, DJ_CHAMPAGNE_TT,
+        // 41
+        EXP, EXP_TT,
+        // 43
+        DD_WHITE_YG, DD_CHAMPAGNE_YG, DD_BLACK_YG, DD_OLIVE_RG, DD_CHOCOLATE_RG, DD_WHITE_RG, DD_ICE_P, DD_OLIVE_P,
+        // 51
+        AQ_WHITE, AQ_BLUE, AQ_GREY, AQ_BLACK,
+        // 55
+        PILOT_BLACK, PILOT_WHITE, PILOT_BLUE, PILOT_TG, 
+        // 59
+        SENATOR,
+        // 60
+        GS,
+        // 61
+        TANK, TANK_RG, TANK_YG,
+        // 64
+        TANK_F, TANK_F_RG, TANK_F_YG
+    }
     mapping (IWatchScratchersWatchCaseRenderer.CaseType => address) public caseRenderers;
     mapping (WatchType => mapping (bytes => bytes)) public colorReplacements;
     mapping (bytes => bytes) greenPatek;
@@ -134,13 +165,15 @@ contract WatchScratchersRenderer is Ownable {
             svgParts[2] = '.circle { color: var(--color-hand-outer); } ';
         }
         svgParts[3] = '.dial { width: 60vmin; height: 60vmin; fill: currentColor; -webkit-transform-origin: 50px 50px; transform-origin: 50px 50px; -webkit-animation-name: fade-in; animation-name: fade-in; -webkit-animation-duration: 500ms; animation-duration: 500ms; -webkit-animation-fill-mode: both; animation-fill-mode: both; } ';
-        if (handType == HandType.ROUND) {
+        if (handType == HandType.ROUND || handType == HandType.TANK_F) {
             svgParts[4] = '.dial line { stroke: currentColor; stroke-linecap: round; } ';
         } else {
             svgParts[4] = '.dial line { stroke: currentColor; } ';
         }
         if (handType == HandType.SENATOR) {
             svgParts[5] = '.hand { transition: -webkit-transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275), -webkit-transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); } .hour-hand { animation: rotateHourHand 216000s linear infinite; } .hand-outer { stroke-width: 3px; color: var(--color-hand-outer); } .minute-hand { animation: rotateMinuteHand 3600s linear infinite; } .second-hand { color: var(--color-accent); stroke-width: 2px; animation: rotateSecondHand 60s linear infinite; } ';
+        } else if (handType == HandType.TANK_F) {
+            svgParts[5] = '.hand { transition: -webkit-transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275), -webkit-transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); } .hour-hand { animation: rotateHourHand 216000s linear infinite; } .hand-outer { stroke-width: 5px; color: var(--color-hand-outer); } .hand-inner { stroke-width: 2px; color: var(--color-hand-inner); } .minute-hand { animation: rotateMinuteHand 3600s linear infinite; } .second-hand { color: var(--color-accent); stroke-width: 2px; animation: rotateSecondHand 60s linear infinite; } ';
         } else {
             svgParts[5] = '.hand { transition: -webkit-transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275), -webkit-transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); } .hour-hand { animation: rotateHourHand 216000s linear infinite; } .hand-outer { stroke-width: 4px; color: var(--color-hand-outer); } .hand-inner { stroke-width: 2px; color: var(--color-hand-inner); } .minute-hand { animation: rotateMinuteHand 3600s linear infinite; } .second-hand { color: var(--color-accent); stroke-width: 2px; animation: rotateSecondHand 60s linear infinite; } ';
         }
@@ -240,5 +273,200 @@ contract WatchScratchersRenderer is Ownable {
             watchHands = _renderHands('0 0 2100 2100', '157', '310.7', '#F0CD94', '#F0CD94', '#F8F8F8', 234, 342, 57, HandType.ROUND);
         }
         return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderVC(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7500 7500" x="150" y="302">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.VC]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.VC);
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.VC_BLUE || watchType == WatchType.VC_BLACK) {
+            watchHands = _renderHands('0 0 2100 2100', '156.1', '310.9', '#C9C5C8', '#C9C5C8', '#FFFCFB', 234, 342, 57, HandType.ROUND);
+        } else if (watchType == WatchType.VC_WHITE) {
+            watchHands = _renderHands('0 0 2100 2100', '156.1', '310.9', '#3E3C3A', '#3E3C3A', '#FFFCFB', 234, 342, 57, HandType.ROUND); 
+        } else if (watchType == WatchType.VC_BLUE_RG) {
+            watchHands = _renderHands('0 0 2100 2100', '156.1', '310.9', '#EBB788', '#EBB788', '#FFFCFB', 234, 342, 57, HandType.ROUND);
+        }
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderSUB(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7300 7300" x="150" y="302">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.SUB]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.SUB);
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.SUB_BLACK_TT || watchType == WatchType.SUB_BLUE_TT || watchType == WatchType.SUB_BLACK_YG || watchType == WatchType.SUB_BLUE_YG) {
+            watchHands = _renderHands('0 0 2000 2000', '156.9', '310.6', '#FBECC8', '#FBECC8', '#F6F8F7', 234, 342, 57, HandType.SPORT);
+        } else {
+            watchHands = _renderHands('0 0 2000 2000', '156.9', '310.6', '#C1C1C1', '#C1C1C1', '#F6F8F7', 234, 342, 57, HandType.SPORT);
+        }
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderYACHT(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7300 7300" x="150" y="302">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.YACHT]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.YACHT);
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.YACHT_BLUE) {
+            watchHands = _renderHands('0 0 2000 2000', '156.9', '310.6', '#FA0029', '#C1C1C1', '#F6F8F7', 234, 342, 57, HandType.SPORT);
+        } else {
+            watchHands = _renderHands('0 0 2000 2000', '156.9', '310.6', '#00ABD9', '#C1C1C1', '#F6F8F7', 234, 342, 57, HandType.SPORT);
+        }
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderOpDjExp(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7300 7300" x="150" y="301">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase;
+        string memory watchHands;
+        
+        if (watchType >= WatchType.OP_YELLOW && watchType < WatchType.DJ_WHITE) {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.OP]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.OP);
+            watchHands = _renderHands('0 0 2000 2000', '156', '309.2', '#E4E4E4', '#E4E4E4', '#F7FDFA', 234, 342, 57, HandType.DRESS_ROLEX);
+        } else if (watchType >= WatchType.DJ_WHITE && watchType < WatchType.EXP) {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.DJ]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.DJ);
+            watchHands = _renderHands('0 0 2000 2000', '156', '309.2', '#E4E4E4', '#E4E4E4', '#F7FDFA', 234, 342, 57, HandType.DRESS_ROLEX);
+        } else {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.EXP]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.EXP);
+            watchHands = _renderHands('0 0 2550 2550', '157.5', '310', '#E4E4E4', '#E4E4E4', '#F7FDFA', 234, 342, 57, HandType.SPORT);
+        }
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+    
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderDD(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7300 7300" x="150" y="302">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase;
+        if (watchType == WatchType.DD_ICE_P || watchType == WatchType.DD_OLIVE_P) {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.DD_P]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.DD_P);
+        } else {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.DD]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.DD);
+        }
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.DD_OLIVE_P || watchType == WatchType.DD_ICE_P) {
+            watchHands = _renderHands('0 0 2000 2000', '156.3', '310.1', '#E4E4E4', '#E4E4E4', '#F7FDFA', 234, 342, 57, HandType.DRESS);
+        } else if (watchType == WatchType.DD_WHITE_RG || watchType == WatchType.DD_CHOCOLATE_RG || watchType == WatchType.DD_OLIVE_RG) {
+            watchHands = _renderHands('0 0 2000 2000', '156.3', '310.1', '#F5C8BA', '#F5C8BA', '#F7FDFA', 234, 342, 57, HandType.DRESS);
+        } else {
+            watchHands = _renderHands('0 0 2000 2000', '156.3', '310.1', '#FBECC8', '#FBECC8', '#F7FDFA', 234, 342, 57, HandType.DRESS);
+        }
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderAQ(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 8900 8900" x="151.5" y="303">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.AQ]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.AQ);
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.AQ_WHITE) {
+            watchHands = _renderHands('0 0 1950 1950', '156.4', '310.4', '#F96C00', '#525353', '#FFFFFF', 234, 342, 57, HandType.SPORT);
+        } else if (watchType == WatchType.AQ_GREY) {
+            watchHands = _renderHands('0 0 1950 1950', '156.4', '310.4', '#00588B', '#00588B', '#FFFFFF', 234, 342, 57, HandType.SPORT);
+        } else {
+            watchHands = _renderHands('0 0 1950 1950', '156.4', '310.4', '#DDDDDD', '#B6B6B6', '#FFFFFF', 234, 342, 57, HandType.DRESS);
+        }
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderPILOT(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 10000 10000" x="154" y="301">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.PILOT]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.PILOT);
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory watchHands;
+        if (watchType == WatchType.PILOT_WHITE) {
+            watchHands = _renderHands('0 0 2550 2550', '156.4', '310.4', '#0E0E0E', '#0E0E0E', '#FFFFFF', 234, 342, 57, HandType.SPORT);
+        } else {
+            watchHands = _renderHands('0 0 2550 2550', '156.4', '310.4', '#FFFFFF', '#444444', '#FFFFFF', 234, 342, 57, HandType.DRESS);
+        }
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderTANK(
+        WatchType watchType
+    ) public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 10000 10000" x="154" y="301">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase;
+        string memory watchHands;
+        if (watchType >= WatchType.TANK && watchType < WatchType.TANK_F) {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.TANK]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.TANK);
+            watchHands = _renderHands('0 0 2550 2550', '156.4', '310.4', '#1C55B4', '#1C55B4', '#1C55B4', 234, 342, 57, HandType.TANK_F);
+        } else {
+            watchCase = IWatchScratchersWatchCaseRenderer(
+                caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.TANK_F]
+            ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.TANK_F);
+            watchHands = _renderHands('0 0 3300 3300', '158.8', '309.8', '#1C55B4', '#1C55B4', '#1C55B4', 234, 342, 57, HandType.TANK_F);
+        }
+        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+
+        return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderGS() public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7500 7500" x="150" y="302">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.GS]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.GS);
+        string memory watchHands = _renderHands('0 0 2100 2100', '156.1', '310.9', '#006AB4', '#B1B0AF', '#B1B0AF', 234, 342, 57, HandType.DRESS);
+        
+        return string(abi.encodePacked(caseSvgStart, watchCase, caseSvgEnd, watchHands));
+    }
+
+    function renderSENATOR() public view returns (string memory) { 
+        string memory caseSvgStart = '<svg viewBox="0 0 7500 7500" x="150" y="302">';
+        string memory caseSvgEnd =  '</svg>';
+        string memory watchCase = IWatchScratchersWatchCaseRenderer(
+            caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.SENATOR]
+        ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.SENATOR);
+        string memory watchHands = _renderHands('0 0 2100 2100', '156.1', '310.9', '#0056A5', '#0056A5', '#0056A5', 234, 342, 57, HandType.ROUND);
+        
+        return string(abi.encodePacked(caseSvgStart, watchCase, caseSvgEnd, watchHands));
     }
 }
