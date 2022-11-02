@@ -54,7 +54,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 
-contract WatchScratchers is ERC721, Ownable, ReentrancyGuard {
+contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
     using ECDSA for bytes32;
     /*==============================================================
     ==                        Custom Errors                       ==
@@ -91,7 +91,7 @@ contract WatchScratchers is ERC721, Ownable, ReentrancyGuard {
     bool public allowListMintIsActive;
     bool public watchClubMintIsActive;
 
-    address public watchScratchersRenderer;
+    address public watchCoRenderer;
 
     // tokenId to dna
     mapping(uint256 => uint256) public dna;
@@ -246,8 +246,8 @@ contract WatchScratchers is ERC721, Ownable, ReentrancyGuard {
     ==                    Only Owner Functions                    ==
     ==============================================================*/
 
-    function setWatchScratchersRenderer(address _watchScratchersRenderer) external onlyOwner {
-        watchScratchersRenderer = _watchScratchersRenderer;
+    function setWatchCoRenderer(address _watchCoRenderer) external onlyOwner {
+        watchCoRenderer = _watchCoRenderer;
     }
 
     function setAllowlistSigner(address signer) external onlyOwner {
