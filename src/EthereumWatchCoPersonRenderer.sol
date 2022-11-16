@@ -114,7 +114,8 @@ contract EthereumWatchCoPersonRenderer is Ownable {
             bodyAndBackground, 
             face,
             glasses,
-            hat
+            hat,
+            '</g>'
         ));
     }
 }
