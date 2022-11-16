@@ -6,17 +6,17 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract EthereumWatchCoPersonRenderer is Ownable {
     constructor() {}
-    enum HatType { BROWN, BLACK, RED, BLUE, NAVY, LAVENDER, NONE }
+    enum HatType { BROWN, BLACK, RED, BLUE, NAVY, LAVENDER, WHITE, NONE }
     enum GlassesType { ROUND, AVIATOR, ROUND_GOLD, AVIATOR_GOLD, NONE }
     enum EarType { AIRPODS, NONE }
-    enum ShirtType { BLUE, RED, PURPLE, BROWN, NAVY, GREEN, GREY, BLACK } // TODO: add GOLD
+    enum ShirtType { BLUE, RED, PURPLE, BROWN, NAVY, GREEN, GREY, BLACK, WHITE, GOLD } // TODO: add GOLD
     enum MouthType { SMILE, SERIOUS }
     enum BackgroundType { CREAM, ICE, SILVER, PLATINUM, BROWN, ROSE, GOLD, OLIVE, PINK}
 
     string[6] private HAT_COLORS = ['#7D5C49', '#322E32', '#D7002F', '#005AC6', '#193352', '#CBC2E6'];
     string[6] private HAT_SHADOW_COLORS = ['#664B3C', '#282528', '#AA0025', '#0049A0', '#132841', '#ADA5C5'];
-    string[8] private SHIRT_COLORS = ['#005AC6', '#D7002F', '#9063D8', '#39322A', '#193352', '#00B661', '#62666C', '#322E32'];
-    string[8] private SHIRT_SHADOW_COLORS = ['#0049A0', '#AA0025', '#634698', '#2C2620', '#132841', '#008044', '#43484B', '#282528'];
+    string[10] private SHIRT_COLORS = ['#005AC6', '#D7002F', '#9063D8', '#39322A', '#193352', '#00B661', '#62666C', '#322E32', '#F2F3F4', '#FFE200'];
+    string[10] private SHIRT_SHADOW_COLORS = ['#0049A0', '#AA0025', '#634698', '#2C2620', '#132841', '#008044', '#43484B', '#282528', '#CDCDCF', '#FF9900'];
     string [9] private BACKGROUND_COLORS = ['#FBF6E9', '#C4EAF2', '#E5E4EB', '#FDFDFD', '#8C7A66', '#FFEDE6', '#FFFBE3', '#B8C6A9', '#FAD5DC'];
 
     function _renderHat(HatType hatType) private view returns (string memory) {
