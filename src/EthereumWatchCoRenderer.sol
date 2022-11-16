@@ -165,7 +165,7 @@ contract EthereumWatchCoRenderer is Ownable {
             svgParts[2] = '.circle { color: var(--color-hand-outer); } ';
         }
         svgParts[3] = '.dial { width: 60vmin; height: 60vmin; fill: currentColor; -webkit-transform-origin: 50px 50px; transform-origin: 50px 50px; -webkit-animation-name: fade-in; animation-name: fade-in; -webkit-animation-duration: 500ms; animation-duration: 500ms; -webkit-animation-fill-mode: both; animation-fill-mode: both; } ';
-        if (handType == HandType.ROUND || handType == HandType.TANK || handType == HandType.TANK_F) {
+        if (handType == HandType.ROUND || handType == HandType.TANK || handType == HandType.TANK_F || handType == HandType.SENATOR) {
             svgParts[4] = '.dial line { stroke: currentColor; stroke-linecap: round; } ';
         } else {
             svgParts[4] = '.dial line { stroke: currentColor; } ';
