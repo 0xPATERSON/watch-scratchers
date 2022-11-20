@@ -2,7 +2,6 @@
 pragma solidity 0.8.10;
 
 import "ds-test/test.sol";
-import "../EthereumWatchCoRenderer.sol";
 import "../EthereumWatchCoPersonRenderer.sol";
 
 contract EthereumWatchCoPersonRendererTest is DSTest {
