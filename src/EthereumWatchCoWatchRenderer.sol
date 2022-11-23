@@ -13,8 +13,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     constructor() {}
     
     mapping (IWatchScratchersWatchCaseRenderer.CaseType => address) public caseRenderers;
-    mapping (WatchType => mapping (bytes => bytes)) public colorReplacements;
-    mapping (bytes => bytes) greenPatek;
+    mapping (IEthereumWatchCoWatchRenderer.WatchType => mapping (bytes => bytes)) public colorReplacements;
 
     address public watchHandsRenderer;
 
@@ -29,7 +28,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         caseRenderers[caseType] = caseRenderer;
     }
 
-    function setColorReplacement(WatchType watchType, bytes[] memory oldColors, bytes[] memory newColors) external onlyOwner {
+    function setColorReplacement(IEthereumWatchCoWatchRenderer.WatchType watchType, bytes[] memory oldColors, bytes[] memory newColors) external onlyOwner {
         unchecked {
             uint256 i;
             for (; i < oldColors.length; ) {
@@ -50,7 +49,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
 }
 
     // Replaces all occurances of _oldValue with _newValue in _string. _oldValue and _newValue will always be length 7.
-    function _colorReplace(string memory _string, WatchType watchType) public view returns (string memory) {
+    function _colorReplace(string memory _string, IEthereumWatchCoWatchRenderer.WatchType watchType) public view returns (string memory) {
         bytes memory _stringBytes = bytes(_string);
         bytes memory resultBytes = new bytes(_stringBytes.length);
         
@@ -79,7 +78,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderPP(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) {
         string memory caseSvgStart = '<svg viewBox="0 0 7800 7800" x="151" y="300">';
         string memory caseSvgEnd =  '</svg>';
@@ -88,18 +87,18 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.PP);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.PP_TIFFANY || watchType == WatchType.PP_WHITE) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.PP_TIFFANY || watchType == IEthereumWatchCoWatchRenderer.WatchType.PP_WHITE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1900 1900', '157.7', '310.8', '#041418', '#041418', '#FEFEFD', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
-        } else if (watchType == WatchType.PP_GREEN || watchType == WatchType.PP_BLUE) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.PP_GREEN || watchType == IEthereumWatchCoWatchRenderer.WatchType.PP_BLUE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1900 1900', '157.7', '310.8', '#B4B8B2', '#B4B8B2', '#FEFEFD', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND); 
-        } else if (watchType == WatchType.PP_CHOCOLATE) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.PP_CHOCOLATE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1900 1900', '157.7', '310.8', '#EFCCAC', '#EFCCAC', '#FEFEFD', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
         }
         return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
     }
 
     function _renderAP(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6500 6500" x="146.7" y="299">';
         string memory caseSvgEnd =  '</svg>';
@@ -108,18 +107,18 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.AP);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.AP_WHITE || watchType == WatchType.AP_BLUE || watchType == WatchType.AP_GREY || watchType == WatchType.AP_BLACK) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_WHITE || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_GREY || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309', '#D5D5D5', '#868582', '#F8F8F8', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
-        } else if (watchType == WatchType.AP_BLUE_RG || watchType == WatchType.AP_BLACK_RG) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK_RG) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309', '#D8AB8B', '#D8AB8B', '#F8F8F8', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND); 
-        } else if (watchType == WatchType.AP_BLUE_YG) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE_YG) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309', '#F0CD94', '#F0CD94', '#F8F8F8', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
         }
         return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
     }
 
     function _renderVC(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6550 6550" x="150.3" y="299.6">';
         string memory caseSvgEnd =  '</svg>';
@@ -128,18 +127,18 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.VC);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.VC_BLUE || watchType == WatchType.VC_BLACK) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.VC_BLUE || watchType == IEthereumWatchCoWatchRenderer.WatchType.VC_BLACK) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '157.1', '309.2', '#C9C5C8', '#C9C5C8', '#FFFCFB', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
-        } else if (watchType == WatchType.VC_WHITE) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.VC_WHITE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '157.1', '309.2', '#3E3C3A', '#3E3C3A', '#FFFCFB', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND); 
-        } else if (watchType == WatchType.VC_BLUE_RG) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.VC_BLUE_RG) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '157.1', '309.2', '#EBB788', '#EBB788', '#FFFCFB', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
         }
         return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
     }
 
     function _renderSUB(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6500 6500" x="149" y="299.5">';
         string memory caseSvgEnd =  '</svg>';
@@ -148,7 +147,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.SUB);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.SUB_BLACK_TT || watchType == WatchType.SUB_BLUE_TT || watchType == WatchType.SUB_BLACK_YG || watchType == WatchType.SUB_BLUE_YG) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.SUB_BLACK_TT || watchType == IEthereumWatchCoWatchRenderer.WatchType.SUB_BLUE_TT || watchType == IEthereumWatchCoWatchRenderer.WatchType.SUB_BLACK_YG || watchType == IEthereumWatchCoWatchRenderer.WatchType.SUB_BLUE_YG) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.3', '308.9', '#FBECC8', '#FBECC8', '#F6F8F7', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
         } else {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.3', '308.9', '#C1C1C1', '#C1C1C1', '#F6F8F7', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
@@ -157,7 +156,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderYACHT(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6500 6500" x="149" y="299.5">';
         string memory caseSvgEnd =  '</svg>';
@@ -166,7 +165,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.YACHT);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.YACHT_BLUE) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.YACHT_BLUE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.3', '308.9', '#FA0029', '#C1C1C1', '#F6F8F7', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
         } else {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.3', '308.9', '#00ABD9', '#C1C1C1', '#F6F8F7', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
@@ -175,19 +174,19 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderOpDjExp(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6500 6500" x="150" y="300">';
         string memory caseSvgEnd =  '</svg>';
         string memory watchCase;
         string memory watchHands;
         
-        if (watchType >= WatchType.OP_YELLOW && watchType < WatchType.DJ_WHITE) {
+        if (watchType >= IEthereumWatchCoWatchRenderer.WatchType.OP_YELLOW && watchType < IEthereumWatchCoWatchRenderer.WatchType.DJ_WHITE) {
             watchCase = IWatchScratchersWatchCaseRenderer(
                 caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.OP]
             ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.OP);
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1750 1750', '156.5', '308.9', '#E4E4E4', '#E4E4E4', '#F7FDFA', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.DRESS_ROLEX);
-        } else if (watchType >= WatchType.DJ_WHITE && watchType < WatchType.EXP) {
+        } else if (watchType >= IEthereumWatchCoWatchRenderer.WatchType.DJ_WHITE && watchType < IEthereumWatchCoWatchRenderer.WatchType.EXP) {
             watchCase = IWatchScratchersWatchCaseRenderer(
                 caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.DJ]
             ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.DJ);
@@ -204,12 +203,12 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderDD(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6000 6000" x="149" y="299.5">';
         string memory caseSvgEnd =  '</svg>';
         string memory watchCase;
-        if (watchType == WatchType.DD_ICE_P || watchType == WatchType.DD_OLIVE_P) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_ICE_P || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_OLIVE_P) {
             watchCase = IWatchScratchersWatchCaseRenderer(
                 caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.DD_P]
             ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.DD_P);
@@ -220,9 +219,9 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         }
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.DD_OLIVE_P || watchType == WatchType.DD_ICE_P) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_OLIVE_P || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_ICE_P) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', '#E4E4E4', '#E4E4E4', '#F7FDFA', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
-        } else if (watchType == WatchType.DD_WHITE_RG || watchType == WatchType.DD_CHOCOLATE_RG || watchType == WatchType.DD_OLIVE_RG) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_WHITE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_CHOCOLATE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_OLIVE_RG) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', '#F5C8BA', '#F5C8BA', '#F7FDFA', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
         } else {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', '#FBECC8', '#FBECC8', '#F7FDFA', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
@@ -231,7 +230,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderAQ(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 7500 7500" x="150" y="299.5">';
         string memory caseSvgEnd =  '</svg>';
@@ -240,9 +239,9 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.AQ);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.AQ_WHITE) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AQ_WHITE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1630 1630', '155.7', '308.4', '#F96C00', '#525353', '#FFFFFF', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
-        } else if (watchType == WatchType.AQ_GREY) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AQ_GREY) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1630 1630', '155.7', '308.4', '#00588B', '#00588B', '#FFFFFF', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
         } else {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1630 1630', '155.7', '308.4', '#DDDDDD', '#B6B6B6', '#FFFFFF', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
@@ -251,7 +250,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderPILOT(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart = '<svg viewBox="0 0 6800 6800" x="150" y="298">';
         string memory caseSvgEnd =  '</svg>';
@@ -260,7 +259,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         ).renderSvg(IWatchScratchersWatchCaseRenderer.CaseType.PILOT);
         string memory coloredWatchCase = _colorReplace(watchCase, watchType);
         string memory watchHands;
-        if (watchType == WatchType.PILOT_WHITE) {
+        if (watchType == IEthereumWatchCoWatchRenderer.WatchType.PILOT_WHITE) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '155.7', '308.5', '#0E0E0E', '#0E0E0E', '#FFFFFF', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.SPORT);
         } else {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '155.7', '308.5', '#FFFFFF', '#444444', '#FFFFFF', 234, 342, 57, IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
@@ -269,13 +268,13 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     }
 
     function _renderTANK(
-        WatchType watchType
+        IEthereumWatchCoWatchRenderer.WatchType watchType
     ) public view returns (string memory) { 
         string memory caseSvgStart;
         string memory caseSvgEnd =  '</svg>';
         string memory watchCase;
         string memory watchHands;
-        if (watchType >= WatchType.TANK && watchType < WatchType.TANK_F) {
+        if (watchType >= IEthereumWatchCoWatchRenderer.WatchType.TANK && watchType < IEthereumWatchCoWatchRenderer.WatchType.TANK_F) {
             caseSvgStart = '<svg viewBox="0 0 8500 8500" x="152" y="299.5">';
             watchCase = IWatchScratchersWatchCaseRenderer(
                 caseRenderers[IWatchScratchersWatchCaseRenderer.CaseType.TANK]

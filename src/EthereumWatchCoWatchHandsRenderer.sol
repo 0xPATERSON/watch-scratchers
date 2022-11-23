@@ -5,7 +5,52 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./interfaces/IEthereumWatchCoWatchHandsRenderer.sol";
 
 contract EthereumWatchCoWatchHandsRenderer is IEthereumWatchCoWatchHandsRenderer {
-    constructor() {}
+    // [hour, minutes, minus/plus (0/1)]
+    uint256[3][38] public hourAndMinuteAdjustments;
+    constructor() {
+        // minuses
+        hourAndMinuteAdjustments[0] = [12, 0, 0];
+        hourAndMinuteAdjustments[1] = [11, 0, 0];
+        hourAndMinuteAdjustments[2] = [10, 0, 0];
+        hourAndMinuteAdjustments[3] = [9, 0, 0];
+        hourAndMinuteAdjustments[4] = [8, 0, 0];
+        hourAndMinuteAdjustments[5] = [7, 0, 0];
+        hourAndMinuteAdjustments[6] = [6, 0, 0];
+        hourAndMinuteAdjustments[7] = [5, 0, 0];
+        hourAndMinuteAdjustments[8] = [4, 0, 0];
+        hourAndMinuteAdjustments[9] = [3, 0, 0];
+        hourAndMinuteAdjustments[10] = [2, 0, 0];
+        hourAndMinuteAdjustments[11] = [1, 0, 0];
+        // utc
+        hourAndMinuteAdjustments[12] = [0, 0, 1];
+        // pluses
+        hourAndMinuteAdjustments[13] = [1, 0, 1];
+        hourAndMinuteAdjustments[14] = [2, 0, 1];
+        hourAndMinuteAdjustments[15] = [3, 0, 1];
+        hourAndMinuteAdjustments[16] = [4, 0, 1];
+        hourAndMinuteAdjustments[17] = [5, 0, 1];
+        hourAndMinuteAdjustments[18] = [6, 0, 1];
+        hourAndMinuteAdjustments[19] = [7, 0, 1];
+        hourAndMinuteAdjustments[20] = [8, 0, 1];
+        hourAndMinuteAdjustments[21] = [9, 0, 1];
+        hourAndMinuteAdjustments[22] = [10, 0, 1];
+        hourAndMinuteAdjustments[23] = [11, 0, 1];
+        hourAndMinuteAdjustments[24] = [12, 0, 1];
+        hourAndMinuteAdjustments[25] = [13, 0, 1];
+        hourAndMinuteAdjustments[26] = [14, 0, 1];
+        // fractionals
+        hourAndMinuteAdjustments[27] = [9, 30, 0];
+        hourAndMinuteAdjustments[28] = [3, 30, 0];
+        hourAndMinuteAdjustments[29] = [3, 30, 1];
+        hourAndMinuteAdjustments[30] = [4, 30, 1];
+        hourAndMinuteAdjustments[31] = [5, 30, 1];
+        hourAndMinuteAdjustments[32] = [5, 45, 1];
+        hourAndMinuteAdjustments[33] = [6, 30, 1];
+        hourAndMinuteAdjustments[34] = [8, 45, 1];
+        hourAndMinuteAdjustments[35] = [9, 30, 1];
+        hourAndMinuteAdjustments[36] = [10, 30, 1];
+        hourAndMinuteAdjustments[37] = [13, 45, 1];
+    }
 
     function _renderHandAnimation(
         string memory handName,
