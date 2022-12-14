@@ -15,7 +15,7 @@ contract EthereumWatchCoWatchHandsRenderer is IEthereumWatchCoWatchHandsRenderer
     ) private pure returns(string memory) {
         string[6] memory svgParts;
         svgParts[0] = string(abi.encodePacked(
-            '<style>g, line, circle { --color-accent: ', 
+            '<style id="watch-hands-style">g, line, circle { --color-accent: ', 
             accentColor, 
             '; --color-hand-outer: ', 
             outerHandColor, 
