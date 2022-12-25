@@ -6,10 +6,13 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract EthereumWatchCoPersonRenderer is Ownable {
     constructor() {}
+
+    // TODO: these need to be numbers in an array, which I can then use to index into, enums are not necessary
+    // checkout chain runners: https://mirror.xyz/0x88a0371fc2BefDfC6F675F9293DE32ef79D6f6c7/6BT2CYyZjqKJ2FKIohLt9cNb_TYJHjFBn_0sTKU5vOc 
     enum HatType { BROWN, BLACK, RED, BLUE, NAVY, LAVENDER, WHITE, NONE }
     enum GlassesType { ROUND, AVIATOR, ROUND_GOLD, AVIATOR_GOLD, NONE }
     enum EarType { AIRPODS, NONE }
-    enum ShirtType { BLUE, RED, PURPLE, BROWN, NAVY, GREEN, GREY, BLACK, WHITE, GOLD } // TODO: add GOLD
+    enum ShirtType { BLUE, RED, PURPLE, BROWN, NAVY, GREEN, GREY, BLACK, WHITE, GOLD }
     enum MouthType { SMILE, SERIOUS }
     enum BackgroundType { CREAM, ICE, SILVER, PLATINUM, BROWN, ROSE, GOLD, OLIVE, PINK}
 
