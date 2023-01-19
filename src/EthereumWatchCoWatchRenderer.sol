@@ -109,10 +109,8 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         string memory watchHands;
         if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_WHITE || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_GREY || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309', '#D5D5D5', '#868582', '#F8F8F8', IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
-        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK_RG) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK_CERAMIC) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309', '#D8AB8B', '#D8AB8B', '#F8F8F8', IEthereumWatchCoWatchHandsRenderer.HandType.ROUND); 
-        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE_YG) {
-            watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309', '#F0CD94', '#F0CD94', '#F8F8F8', IEthereumWatchCoWatchHandsRenderer.HandType.ROUND);
         }
         return string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
     }
@@ -221,7 +219,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
         string memory watchHands;
         if (watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_OLIVE_P || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_ICE_P) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', '#E4E4E4', '#E4E4E4', '#F7FDFA', IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
-        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_WHITE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_CHOCOLATE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_OLIVE_RG) {
+        } else if (watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_CHOCOLATE_RG || watchType == IEthereumWatchCoWatchRenderer.WatchType.DD_OLIVE_RG) {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', '#F5C8BA', '#F5C8BA', '#F7FDFA', IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
         } else {
             watchHands = IEthereumWatchCoWatchHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', '#FBECC8', '#FBECC8', '#F7FDFA', IEthereumWatchCoWatchHandsRenderer.HandType.DRESS);
@@ -317,7 +315,7 @@ contract EthereumWatchCoWatchRenderer is Ownable, IEthereumWatchCoWatchRenderer 
     function renderWatch(IEthereumWatchCoWatchRenderer.WatchType watchType) public view returns (string memory) {
         if (watchType <= IEthereumWatchCoWatchRenderer.WatchType.PP_CHOCOLATE) {
             return _renderPP(watchType);
-        } else if (watchType <= IEthereumWatchCoWatchRenderer.WatchType.AP_BLUE_YG) {
+        } else if (watchType <= IEthereumWatchCoWatchRenderer.WatchType.AP_BLACK_CERAMIC) {
             return _renderAP(watchType);
         } else if (watchType <= IEthereumWatchCoWatchRenderer.WatchType.VC_BLUE_RG) {
             return _renderVC(watchType);

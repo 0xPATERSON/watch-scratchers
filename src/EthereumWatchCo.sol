@@ -74,7 +74,7 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
     uint256 private constant MINT_PRICE = 0.04 ether;
     uint256 private constant MINT_PRICE_CHOOSE_WATCH = 0.08 ether;
     uint256 private constant WATCH_CLUB_MINT_PRICE = 0.00 ether;
-    uint256 private constant MAX_PER_ADDRESS = 10;
+    uint256 private constant MAX_PER_ADDRESS = 5;
 
     uint256 public constant BIT_MASK_LENGTH = 14;
     uint256 public constant BIT_MASK = 2**BIT_MASK_LENGTH - 1;
@@ -106,14 +106,14 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
 
     /**
      * @notice public mint
-     * @param quantity max 10
+     * @param quantity max 5
      */
     function publicMint(uint256 quantity) external payable {
         uint256 currentSupply = _totalSupply;
         if (tx.origin != msg.sender) revert CallerIsContract();
         if (!mintIsActive) revert MintNotActive();
         if (currentSupply + quantity > MAX_SUPPLY) revert MintMaxSupplyReached();
-        if (quantity > 10) revert MintTooMany();
+        if (quantity > MAX_PER_ADDRESS) revert MintTooMany();
         if (quantity * MINT_PRICE != msg.value) revert PaymentAmountInvalid();
 
         unchecked {

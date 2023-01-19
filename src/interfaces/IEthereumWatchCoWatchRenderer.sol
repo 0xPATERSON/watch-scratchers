@@ -6,7 +6,7 @@ interface IEthereumWatchCoWatchRenderer {
         // 0
         PP_TIFFANY, PP_BLUE, PP_GREEN, PP_WHITE, PP_CHOCOLATE,
         // 5
-        AP_WHITE, AP_BLUE, AP_GREY, AP_BLACK, AP_BLUE_RG, AP_BLACK_RG, AP_BLUE_YG,
+        AP_WHITE, AP_BLUE, AP_GREY, AP_BLACK, AP_BLUE_RG, AP_BLACK_RG, AP_BLACK_CERAMIC,
         // 12
         VC_BLUE, VC_BLACK, VC_WHITE, VC_BLUE_RG,
         // 16
@@ -16,22 +16,22 @@ interface IEthereumWatchCoWatchRenderer {
         // 27
         OP_YELLOW, OP_GREEN, OP_CORAL, OP_TIFFANY, OP_PINK, OP_BLACK, OP_BLUE,
         // 34
-        DJ_WHITE, DJ_BLUE, DJ_RHODIUM, DJ_BLACK, DJ_WHITE_TT, DJ_RHODIUM_TT, DJ_CHAMPAGNE_TT,
-        // 41
+        DJ_WHITE, DJ_BLUE, DJ_RHODIUM, DJ_BLACK, DJ_CHAMPAGNE_TT,
+        // 39
         EXP, EXP_TT,
-        // 43
-        DD_WHITE_YG, DD_CHAMPAGNE_YG, DD_BLACK_YG, DD_OLIVE_RG, DD_CHOCOLATE_RG, DD_WHITE_RG, DD_ICE_P, DD_OLIVE_P,
-        // 51
+        // 41
+        DD_WHITE_YG, DD_CHAMPAGNE_YG, DD_BLACK_YG, DD_OLIVE_RG, DD_CHOCOLATE_RG, DD_ICE_P, DD_OLIVE_P,
+        // 48
         AQ_WHITE, AQ_BLUE, AQ_GREY, AQ_BLACK,
-        // 55
+        // 52
         PILOT_BLACK, PILOT_WHITE, PILOT_BLUE, PILOT_TG, 
-        // 59
+        // 56
         SENATOR,
-        // 60
+        // 57
         GS,
-        // 61
+        // 58
         TANK, TANK_RG, TANK_YG,
-        // 64
+        // 61
         TANK_F, TANK_F_RG, TANK_F_YG
     }
 
