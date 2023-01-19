@@ -32,6 +32,10 @@ contract EthereumWatchCoRenderer is Ownable, IEthereumWatchCoRenderer {
         revert TraitNotFound();
     }
 
+    function renderWatch(uint256 dna) public view returns (string memory) {
+        
+    }
+
     function renderPerson(uint256 dna) public view returns (string memory) {
         uint8[10] memory HAT_WEIGHTS = [9, 19, 29, 39, 49, 59, 69, 99, 0, 0];
         uint8[10] memory GLASSES_WEIGHTS = [24, 49, 59, 69, 99, 0, 0, 0, 0, 0];

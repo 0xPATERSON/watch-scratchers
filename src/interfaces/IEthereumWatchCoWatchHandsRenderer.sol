@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface IEthereumWatchCoWatchHandsRenderer {
-    enum HandType { DRESS_ROLEX, DRESS, ROUND, SPORT, TANK, TANK_F, SENATOR, DRESS_DD }
+    enum HandType { DRESS_ROLEX, DRESS, ROUND, SPORT, TANK, TANK_F, SENATOR, DRESS_DD, TRINITY, PILOT, AQUA }
 
     function renderHands(
         string memory viewBox,
