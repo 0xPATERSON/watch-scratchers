@@ -22,14 +22,11 @@ contract DjOpExpRenderer is IWatchScratchersWatchCaseRenderer {
                 djDial
             ));
         } else if (caseType == IWatchScratchersWatchCaseRenderer.CaseType.OP) {
-            // do something with just the dial, DJ and OP only differ in the dial
             return string(abi.encodePacked(
                 oysterCase,
                 opDial
             ));
         } else if (caseType == IWatchScratchersWatchCaseRenderer.CaseType.EXP) {
-            // do something with just the dial, EXP and OP only differ in the dial
-            // also shrink EXP's dial file size by using path instead of font
             return string(abi.encodePacked(
                 oysterCase,
                 expDial
