@@ -50,7 +50,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         HAT_WEIGHTS[3] = [16, 33, 0, 49,66, 0, 83, 0, 99, 0];
         HAT_WEIGHTS[4] = [19, 0, 0, 39, 0, 59, 79, 0, 99, 0];
         HAT_WEIGHTS[5] = [14, 28, 0, 42, 0, 56, 70, 84, 99, 0];
-        HAT_WEIGHTS[6] = [19, 0, 0, 0, 39, 59, 79, 0, 99, 0];
+        HAT_WEIGHTS[6] = [16, 0, 0, 0, 33, 49, 66, 83, 99, 0];
         HAT_WEIGHTS[7] = [11, 22, 33, 44, 55, 66, 77, 88, 99, 0];
 
         uint8[8] memory numbersFromDna = splitDna(dna);
