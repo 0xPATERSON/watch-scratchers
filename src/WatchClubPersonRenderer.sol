@@ -5,14 +5,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./interfaces/IWatchClubPersonRenderer.sol";
 
-contract EthereumWatchCoPersonRenderer is Ownable, IWatchClubPersonRenderer {
+contract WatchClubPersonRenderer is Ownable, IWatchClubPersonRenderer {
     constructor() {}
 
-    string[6] private HAT_COLORS = ['#322E32', '#7D5C49', '#D7002F', '#005AC6', '#193352', '#CBC2E6'];
-    string[6] private HAT_SHADOW_COLORS = ['#282528', '#5C4436', '#AA0025', '#004292', '#132841', '#ADA5C5'];
-    string[10] private SHIRT_COLORS = ['#005AC6', '#D7002F', '#9063D8', '#7D5C49', '#193352', '#00B661', '#62666C', '#2A4282', '#F2F3F4', '#587DA7'];
-    string[10] private SHIRT_SHADOW_COLORS = ['#004292', '#AA0025', '#634698', '#5C4436', '#132841', '#008044', '#43484B', '#203262', '#CDCDCF', '#466385'];
-    string [9] private BACKGROUND_COLORS = ['#FBF6E9', '#C4EAF2', '#E5E4EB', '#FDFDFD', '#FFEDE6', '#FFFBE3', '#B8C6A9', '#FAD5DC'];
+    string[7] private HAT_COLORS = ['#322E32', '#7D5C49', '#D7002F', '#005AC6', '#193352', '#CBC2E6', '#587DA7'];
+    string[7] private HAT_SHADOW_COLORS = ['#282528', '#5C4436', '#AA0025', '#004292', '#132841', '#ADA5C5', '#466385'];
+    string[8] private SHIRT_COLORS = ['#005AC6', '#D7002F', '#9063D8', '#7D5C49', '#193352', '#F0E7DB', '#B0B9C2', '#F2F3F4'];
+    string[8] private SHIRT_SHADOW_COLORS = ['#004292', '#AA0025', '#634698', '#5C4436', '#132841', '#C6BDB1', '#8B939A', '#CDCDCF'];
+    string [8] private BACKGROUND_COLORS = ['#FBF6E9', '#C4EAF2', '#E5E4EB', '#FDFDFD', '#FFEDE6', '#FFFBE3', '#B8C6A9', '#FAD5DC'];
 
     function _renderHat(IWatchClubPersonRenderer.HatType hatType) private view returns (string memory) {
         if (hatType == IWatchClubPersonRenderer.HatType.NONE) {

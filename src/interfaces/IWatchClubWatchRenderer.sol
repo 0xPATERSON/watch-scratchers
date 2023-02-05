@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IEthereumWatchCoWatchRenderer {
+interface IWatchClubWatchRenderer {
     enum WatchType { 
         // 0
         PP_TIFFANY, PP_BLUE, PP_GREEN, PP_WHITE, PP_CHOCOLATE,

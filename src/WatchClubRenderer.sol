@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "./interfaces/IEthereumWatchCoWatchRenderer.sol";
-import "./interfaces/IEthereumWatchCoRenderer.sol";
+import "./interfaces/IWatchClubWatchRenderer.sol";
+import "./interfaces/IWatchClubRenderer.sol";
 import "./interfaces/IWatchClubPersonRenderer.sol";
 
 // TODO: update function visibilities
 
-contract EthereumWatchCoRenderer is Ownable, IEthereumWatchCoRenderer {
+contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     error TraitNotFound();
 
     address public watchRenderer;
@@ -37,16 +37,26 @@ contract EthereumWatchCoRenderer is Ownable, IEthereumWatchCoRenderer {
     }
 
     function renderPerson(uint256 dna) public view returns (string memory) {
-        uint8[10] memory HAT_WEIGHTS = [9, 19, 29, 39, 49, 59, 69, 99, 0, 0];
         uint8[10] memory GLASSES_WEIGHTS = [24, 49, 59, 69, 99, 0, 0, 0, 0, 0];
         uint8[10] memory EAR_WEIGHTS = [19, 99, 0, 0, 0, 0, 0, 0, 0, 0];
-        uint8[10] memory SHIRT_WEIGHTS = [9, 19, 29, 39, 49, 59, 69, 79, 89, 99];
+        uint8[10] memory SHIRT_WEIGHTS = [12, 25, 37, 50, 63, 75, 87, 99, 0, 0];
         uint8[10] memory MOUTH_WEIGHTS = [49, 99, 0, 0, 0, 0, 0, 0, 0, 0];
         uint8[10] memory BACKGROUND_WEIGHTS = [12, 25, 37, 50, 63, 75, 87, 99, 0, 0];
+        uint8[10][10] memory HAT_WEIGHTS;
+        // To prevent shirt + hat combos that look bad, HAT_WEIGHTS[x][y] is a 2D array where x is the shirt type and y is the hat type
+        HAT_WEIGHTS[0] = [14, 28, 0, 42, 56, 70, 84, 0, 99, 0];
+        HAT_WEIGHTS[1] = [16, 33, 49, 66, 0, 0, 83, 0, 99, 0];
+        HAT_WEIGHTS[2] = [14, 28, 0, 42, 56, 70, 84, 0, 99, 0];
+        HAT_WEIGHTS[3] = [16, 33, 0, 49,66, 0, 83, 0, 99, 0];
+        HAT_WEIGHTS[4] = [19, 0, 0, 39, 0, 59, 79, 0, 99, 0];
+        HAT_WEIGHTS[5] = [14, 28, 0, 42, 0, 56, 70, 84, 99, 0];
+        HAT_WEIGHTS[6] = [19, 0, 0, 0, 39, 59, 79, 0, 99, 0];
+        HAT_WEIGHTS[7] = [11, 22, 33, 44, 55, 66, 77, 88, 99, 0];
 
         uint8[8] memory numbersFromDna = splitDna(dna);
         string memory person = IWatchClubPersonRenderer(personRenderer).renderPerson(
-            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS, numbersFromDna[2])),
+            // hat depends on shirt which is at numbersFromDna[4]
+            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS[numbersFromDna[4]], numbersFromDna[2])),
             IWatchClubPersonRenderer.GlassesType(_getTraitNumberFromWeightsArray(GLASSES_WEIGHTS, numbersFromDna[3])),
             IWatchClubPersonRenderer.EarType(_getTraitNumberFromWeightsArray(EAR_WEIGHTS, numbersFromDna[4])),
             IWatchClubPersonRenderer.ShirtType(_getTraitNumberFromWeightsArray(SHIRT_WEIGHTS, numbersFromDna[5])),

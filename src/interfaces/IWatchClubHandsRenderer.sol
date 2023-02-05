@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IEthereumWatchCoWatchHandsRenderer {
+interface IWatchClubHandsRenderer {
     enum HandType { DRESS_ROLEX, DRESS, ROUND, SPORT, TANK, TANK_F, SENATOR, DRESS_DD, TRINITY, PILOT, AQUA, DAUPHINE }
 
     function renderHands(

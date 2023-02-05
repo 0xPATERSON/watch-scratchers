@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "./interfaces/IEthereumWatchCoWatchHandsRenderer.sol";
+import "./interfaces/IWatchClubHandsRenderer.sol";
 
-contract EthereumWatchCoWatchHandsRenderer is IEthereumWatchCoWatchHandsRenderer {
+contract WatchClubHandsRenderer is IWatchClubHandsRenderer {
     constructor() {}
 
     function _renderHandStyle(
