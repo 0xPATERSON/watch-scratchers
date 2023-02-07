@@ -21,7 +21,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         personRenderer = _personRenderer;
     }
 
-    function _getTraitNumberFromWeightsArray(uint8[10] memory weightsArray, uint8 numberFromDna) public pure returns (uint8) {
+    function _getTraitNumberFromWeightsArray(uint8[10] memory weightsArray, uint16 numberFromDna) public pure returns (uint8) {
         uint8 i;
         for (; i < weightsArray.length;) {
             if (weightsArray[i] >= numberFromDna) {
@@ -33,7 +33,29 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     }
 
     function renderWatch(uint256 dna) public view returns (string memory) {
-        
+        uint16[64] memory WATCH_WEIGHTS = [
+            2, 8, 14, 20, 25,  // PP
+            31, 37, 43, 49, 54, 59, 62,  // AP
+            69, 76, 83, 89,  // VC
+            107, 125, 135, 153, 163, 173, 183, 193, 203,  // SUB
+            211, 219,  // YACHT
+            231, 243, 255, 267, 272, 284, 296,  // OP
+            308, 320, 332, 344, 354,  // DJ
+            364, 374,  // EXP
+            384, 394, 404, 412, 420, 425, 430,  // DD
+            445, 460, 475, 490,  // AQUA
+            500, 510, 520, 525,  // PILOT
+            527,  // SENATOR
+            537,  // GS
+            547, 555, 563,  // TANK
+            565, 567, 569  // TANK F
+        ];
+        uint16[7] memory numbersFromDna = splitDna(dna);
+        string memory watch = IWatchClubWatchRenderer(watchRenderer).renderWatch(
+            IWatchClubWatchRenderer.WatchType(WATCH_WEIGHTS[numbersFromDna[0]])
+        );
+        return watch;
+
     }
 
     function renderPerson(uint256 dna) public view returns (string memory) {
@@ -53,25 +75,25 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         HAT_WEIGHTS[6] = [16, 0, 0, 0, 33, 49, 66, 83, 99, 0];
         HAT_WEIGHTS[7] = [11, 22, 33, 44, 55, 66, 77, 88, 99, 0];
 
-        uint8[8] memory numbersFromDna = splitDna(dna);
+        uint16[7] memory numbersFromDna = splitDna(dna);
         string memory person = IWatchClubPersonRenderer(personRenderer).renderPerson(
             // hat depends on shirt which is at numbersFromDna[4]
-            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS[numbersFromDna[4]], numbersFromDna[2])),
-            IWatchClubPersonRenderer.GlassesType(_getTraitNumberFromWeightsArray(GLASSES_WEIGHTS, numbersFromDna[3])),
-            IWatchClubPersonRenderer.EarType(_getTraitNumberFromWeightsArray(EAR_WEIGHTS, numbersFromDna[4])),
-            IWatchClubPersonRenderer.ShirtType(_getTraitNumberFromWeightsArray(SHIRT_WEIGHTS, numbersFromDna[5])),
-            IWatchClubPersonRenderer.MouthType(_getTraitNumberFromWeightsArray(MOUTH_WEIGHTS, numbersFromDna[6])),
-            IWatchClubPersonRenderer.BackgroundType(_getTraitNumberFromWeightsArray(BACKGROUND_WEIGHTS, numbersFromDna[7]))
+            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS[numbersFromDna[4]], numbersFromDna[1])),
+            IWatchClubPersonRenderer.GlassesType(_getTraitNumberFromWeightsArray(GLASSES_WEIGHTS, numbersFromDna[2])),
+            IWatchClubPersonRenderer.EarType(_getTraitNumberFromWeightsArray(EAR_WEIGHTS, numbersFromDna[3])),
+            IWatchClubPersonRenderer.ShirtType(_getTraitNumberFromWeightsArray(SHIRT_WEIGHTS, numbersFromDna[4])),
+            IWatchClubPersonRenderer.MouthType(_getTraitNumberFromWeightsArray(MOUTH_WEIGHTS, numbersFromDna[5])),
+            IWatchClubPersonRenderer.BackgroundType(_getTraitNumberFromWeightsArray(BACKGROUND_WEIGHTS, numbersFromDna[6]))
         );
         return person;
     }
 
-    function splitDna(uint256 dna) public pure returns (uint8[8] memory) {
-        uint8[8] memory numbers;
+    function splitDna(uint256 dna) public pure returns (uint16[7] memory) {
+        uint16[7] memory numbers;
         uint256 i;
         unchecked {
             for (; i < numbers.length; ) {
-                numbers[i] = uint8(dna % 100);
+                numbers[i] = uint16(dna % 100);
                 dna /= 100;
             
                 ++i;
