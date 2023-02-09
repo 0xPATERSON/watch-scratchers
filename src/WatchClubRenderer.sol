@@ -21,6 +21,10 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         personRenderer = _personRenderer;
     }
 
+    function setWatchRenderer(address _watchRenderer) external onlyOwner {
+        watchRenderer = _watchRenderer;
+    }
+
     function _getTraitNumberFromWeightsArray(uint8[10] memory weightsArray, uint16 numberFromDna) public pure returns (uint8) {
         uint8 i;
         for (; i < weightsArray.length;) {
@@ -30,6 +34,20 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
             ++i;
         }
         revert TraitNotFound();
+    }
+
+    function splitDna(uint256 dna) public pure returns (uint16[7] memory) {
+        uint16[7] memory numbers;
+        uint256 i;
+        unchecked {
+            for (; i < numbers.length; ) {
+                numbers[i] = uint16(dna % 100);
+                dna /= 100;
+            
+                ++i;
+            }
+            return numbers;
+        }
     }
 
     function renderWatch(uint256 dna) public view returns (string memory) {
@@ -88,21 +106,8 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         return person;
     }
 
-    function splitDna(uint256 dna) public pure returns (uint16[7] memory) {
-        uint16[7] memory numbers;
-        uint256 i;
-        unchecked {
-            for (; i < numbers.length; ) {
-                numbers[i] = uint16(dna % 100);
-                dna /= 100;
-            
-                ++i;
-            }
-            return numbers;
-        }
-    }
-
     function tokenURI(uint256 tokenId, uint256 dna) external pure returns (string memory) {
+        // TODO: fill this out
         return string(abi.encodePacked(
             tokenId,
             dna
