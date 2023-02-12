@@ -4,6 +4,7 @@ pragma solidity 0.8.10;
 import "ds-test/test.sol";
 import "../WatchClubRenderer.sol";
 import "../WatchClubPersonRenderer.sol";
+import "../interfaces/IWatchClubPersonRenderer.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 

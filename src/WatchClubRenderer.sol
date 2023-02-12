@@ -110,12 +110,12 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         HAT_WEIGHTS[7] = [11, 22, 33, 44, 55, 66, 77, 88, 99, 0];
 
         uint16[7] memory numbersFromDna = splitDna(dna);
+        uint8 shirt = _getTraitNumberFromWeightsArray(SHIRT_WEIGHTS, numbersFromDna[4]);
         string memory person = IWatchClubPersonRenderer(personRenderer).renderPerson(
-            // hat depends on shirt which is at numbersFromDna[4]
-            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS[numbersFromDna[4]], numbersFromDna[1])),
+            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS[shirt], numbersFromDna[1])),
             IWatchClubPersonRenderer.GlassesType(_getTraitNumberFromWeightsArray(GLASSES_WEIGHTS, numbersFromDna[2])),
             IWatchClubPersonRenderer.EarType(_getTraitNumberFromWeightsArray(EAR_WEIGHTS, numbersFromDna[3])),
-            IWatchClubPersonRenderer.ShirtType(_getTraitNumberFromWeightsArray(SHIRT_WEIGHTS, numbersFromDna[4])),
+            IWatchClubPersonRenderer.ShirtType(shirt),
             IWatchClubPersonRenderer.MouthType(_getTraitNumberFromWeightsArray(MOUTH_WEIGHTS, numbersFromDna[5])),
             IWatchClubPersonRenderer.BackgroundType(_getTraitNumberFromWeightsArray(BACKGROUND_WEIGHTS, numbersFromDna[6]))
         );
