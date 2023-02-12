@@ -36,14 +36,30 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         revert TraitNotFound();
     }
 
+    // same with getTraitNumberFromWeightsArray, just with an 64 length
+    function _getWatchType(uint16[64] memory weightsArray, uint16 numberFromDna) public pure returns (uint8) {
+        uint8 i;
+        for (; i < weightsArray.length;) {
+            if (weightsArray[i] >= numberFromDna) {
+                return i;
+            }
+            ++i;
+        }
+        revert TraitNotFound();
+    }
+
     function splitDna(uint256 dna) public pure returns (uint16[7] memory) {
         uint16[7] memory numbers;
         uint256 i;
         unchecked {
             for (; i < numbers.length; ) {
-                numbers[i] = uint16(dna % 100);
-                dna /= 100;
-            
+                if (i == 0) {
+                    numbers[i] = uint16(dna % 1000);
+                    dna /= 1000;
+                } else {
+                    numbers[i] = uint16(dna % 100);
+                    dna /= 100;
+                }
                 ++i;
             }
             return numbers;
@@ -70,7 +86,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         ];
         uint16[7] memory numbersFromDna = splitDna(dna);
         string memory watch = IWatchClubWatchRenderer(watchRenderer).renderWatch(
-            IWatchClubWatchRenderer.WatchType(WATCH_WEIGHTS[numbersFromDna[0]])
+            IWatchClubWatchRenderer.WatchType(_getWatchType(WATCH_WEIGHTS, numbersFromDna[0]))
         );
         return watch;
 
