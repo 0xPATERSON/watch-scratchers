@@ -89,7 +89,6 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
             IWatchClubWatchRenderer.WatchType(_getWatchType(WATCH_WEIGHTS, numbersFromDna[0]))
         );
         return watch;
-
     }
 
     function renderPerson(uint256 dna) public view returns (string memory) {
@@ -122,8 +121,17 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         return person;
     }
 
+    function renderScript(uint256 dna) public view returns (string memory) {
+
+    }
+
+    function renderSvg(uint256 dna) public view returns (string memory) {
+        // TODO: svg is missing background and close button
+    }
+
     function tokenURI(uint256 tokenId, uint256 dna) external pure returns (string memory) {
         // TODO: fill this out
+        // TODO: missing </div> after styles
         return string(abi.encodePacked(
             tokenId,
             dna

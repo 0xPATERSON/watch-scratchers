@@ -56,7 +56,7 @@ contract WatchClubPersonRenderer is Ownable, IWatchClubPersonRenderer {
         IWatchClubPersonRenderer.ShirtType shirtType,
         IWatchClubPersonRenderer.BackgroundType backgroundType
     ) private view returns (string memory) {
-        string memory partOne = '<g><rect width="380" height="380" fill="';
+        string memory partOne = '<g id="person"><rect width="380" height="380" fill="';
         string memory partTwo = '"/><rect x="153" y="253" width="94" height="187" fill="';
         string memory partThree = '"/><rect x="196.293" y="266.171" width="53.1566" height="201.704" transform="rotate(-15.3932 196.293 266.171)" fill="';
         string memory partFour = '"/><path d="M239.766 243C228.48 249.211 211.739 272.472 159.331 264.441" stroke="';
