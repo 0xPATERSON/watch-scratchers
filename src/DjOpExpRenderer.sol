@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IWatchClubCaseRenderer.sol";
 
-// TODO: this file is too big (about 26KB), refactor
-
 contract DjOpExpRenderer is IWatchClubCaseRenderer {
     constructor() {}
     

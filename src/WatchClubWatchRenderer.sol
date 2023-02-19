@@ -132,7 +132,7 @@ contract WatchClubWatchRenderer is Ownable, IWatchClubWatchRenderer {
             svgParts[5]
         ));
     }
-
+    
     function _renderPP(
         IWatchClubWatchRenderer.WatchType watchType
     ) public view returns (string memory) {
