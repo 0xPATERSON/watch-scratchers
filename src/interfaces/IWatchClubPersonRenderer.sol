@@ -7,7 +7,7 @@ interface IWatchClubPersonRenderer {
     enum EarType { AIRPODS, NONE }
     enum ShirtType { BLUE, RED, PURPLE, BROWN, NAVY, CREAM, GREY, WHITE}
     enum MouthType { SMILE, SERIOUS }
-    enum BackgroundType { CREAM, ICE, SILVER, PLATINUM, BROWN, ROSE, GOLD, OLIVE, PINK}
+    enum BackgroundType { CREAM, ICE, SILVER, PLATINUM, ROSE, GOLD, OLIVE, PINK}
 
     function renderPerson(
         HatType hatType, 

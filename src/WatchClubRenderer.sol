@@ -6,14 +6,18 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./interfaces/IWatchClubWatchRenderer.sol";
 import "./interfaces/IWatchClubRenderer.sol";
 import "./interfaces/IWatchClubPersonRenderer.sol";
+import "./interfaces/IWatchClubTraitParser.sol";
 
 // TODO: update function visibilities
 
 contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     error TraitNotFound();
 
+    uint256 public constant NUM_TRAITS = 7;
+
     address public watchRenderer;
     address public personRenderer;
+    address public traitParser;
     
     constructor() {}
 
@@ -25,7 +29,50 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         watchRenderer = _watchRenderer;
     }
 
-    function _getTraitNumberFromWeightsArray(uint8[10] memory weightsArray, uint16 numberFromDna) public pure returns (uint8) {
+    function setTraitParser(address _traitParser) external onlyOwner {
+        traitParser = _traitParser;
+    }
+
+    // @dev __shirtTraitIndex is not used unless the category is 1
+    function _getTraitIndex(uint256 category, uint16 numberFromDna, uint8 __shirtTraitIndex) public pure returns (uint8) {
+        if (category == 0) {
+            return _getWatchTraitIndex(numberFromDna);
+        }
+
+        uint8[10] memory GLASSES_WEIGHTS = [24, 49, 59, 69, 99, 0, 0, 0, 0, 0];
+        uint8[10] memory EARPHONE_WEIGHTS = [19, 99, 0, 0, 0, 0, 0, 0, 0, 0];
+        uint8[10] memory SHIRT_WEIGHTS = [12, 25, 37, 50, 63, 75, 87, 99, 0, 0];
+        uint8[10] memory MOUTH_WEIGHTS = [49, 99, 0, 0, 0, 0, 0, 0, 0, 0];
+        uint8[10] memory BACKGROUND_WEIGHTS = [12, 25, 37, 50, 63, 75, 87, 99, 0, 0];
+        uint8[10][10] memory HAT_WEIGHTS;
+        // To prevent shirt + hat combos that look bad, HAT_WEIGHTS[x][y] is a 2D array 
+        // where x is the shirt type and y is the hat type
+        HAT_WEIGHTS[0] = [14, 28, 0, 42, 56, 70, 84, 0, 99, 0];
+        HAT_WEIGHTS[1] = [16, 33, 49, 66, 0, 0, 83, 0, 99, 0];
+        HAT_WEIGHTS[2] = [14, 28, 0, 42, 56, 70, 84, 0, 99, 0];
+        HAT_WEIGHTS[3] = [16, 33, 0, 49,66, 0, 83, 0, 99, 0];
+        HAT_WEIGHTS[4] = [19, 0, 0, 39, 0, 59, 79, 0, 99, 0];
+        HAT_WEIGHTS[5] = [14, 28, 0, 42, 0, 56, 70, 84, 99, 0];
+        HAT_WEIGHTS[6] = [16, 0, 0, 0, 33, 49, 66, 83, 99, 0];
+        HAT_WEIGHTS[7] = [11, 22, 33, 44, 55, 66, 77, 88, 99, 0];
+
+        uint8[10] memory weightsArray;
+        if (category == 1) {
+            weightsArray = HAT_WEIGHTS[__shirtTraitIndex];
+        } else if (category == 2) {
+            weightsArray = GLASSES_WEIGHTS;
+        } else if (category == 3) {
+            weightsArray = EARPHONE_WEIGHTS;
+        } else if (category == 4) {
+            weightsArray = SHIRT_WEIGHTS;
+        } else if (category == 5) {
+            weightsArray = MOUTH_WEIGHTS;
+        } else if (category == 6) {
+            weightsArray = BACKGROUND_WEIGHTS;
+        } else {
+            revert TraitNotFound();
+        }
+        
         uint8 i;
         for (; i < weightsArray.length;) {
             if (weightsArray[i] >= numberFromDna) {
@@ -36,8 +83,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         revert TraitNotFound();
     }
 
-    // same with getTraitNumberFromWeightsArray, just with an 64 length
-    function _getWatchType(uint16 numberFromDna) public pure returns (uint8) {
+    function _getWatchTraitIndex(uint16 numberFromDna) public pure returns (uint8) {
         uint16[64] memory WATCH_WEIGHTS = [
             2, 8, 14, 20, 25,  // PP
             31, 37, 43, 49, 54, 59, 62,  // AP
@@ -66,7 +112,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     }
 
     function splitDna(uint256 dna) public pure returns (uint16[7] memory) {
-        uint16[7] memory numbers;
+        uint16[NUM_TRAITS] memory numbers;
         uint256 i;
         unchecked {
             for (; i < numbers.length; ) {
@@ -84,47 +130,30 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     }
 
     function renderWatch(uint256 dna) public view returns (string memory) {
-        uint16[7] memory numbersFromDna = splitDna(dna);
+        uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
         return IWatchClubWatchRenderer(watchRenderer).renderWatch(
-            IWatchClubWatchRenderer.WatchType(_getWatchType(numbersFromDna[0]))
+            IWatchClubWatchRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]))
         );
     }
 
     // @dev this redundantly takes dna instead of separate traits as uint16 to avoid stack too deep
     function renderPerson(uint256 dna) public view returns (string memory) {
-        uint8[10] memory GLASSES_WEIGHTS = [24, 49, 59, 69, 99, 0, 0, 0, 0, 0];
-        uint8[10] memory EAR_WEIGHTS = [19, 99, 0, 0, 0, 0, 0, 0, 0, 0];
-        uint8[10] memory SHIRT_WEIGHTS = [12, 25, 37, 50, 63, 75, 87, 99, 0, 0];
-        uint8[10] memory MOUTH_WEIGHTS = [49, 99, 0, 0, 0, 0, 0, 0, 0, 0];
-        uint8[10] memory BACKGROUND_WEIGHTS = [12, 25, 37, 50, 63, 75, 87, 99, 0, 0];
-        uint8[10][10] memory HAT_WEIGHTS;
-        // To prevent shirt + hat combos that look bad, HAT_WEIGHTS[x][y] is a 2D array 
-        // where x is the shirt type and y is the hat type
-        HAT_WEIGHTS[0] = [14, 28, 0, 42, 56, 70, 84, 0, 99, 0];
-        HAT_WEIGHTS[1] = [16, 33, 49, 66, 0, 0, 83, 0, 99, 0];
-        HAT_WEIGHTS[2] = [14, 28, 0, 42, 56, 70, 84, 0, 99, 0];
-        HAT_WEIGHTS[3] = [16, 33, 0, 49,66, 0, 83, 0, 99, 0];
-        HAT_WEIGHTS[4] = [19, 0, 0, 39, 0, 59, 79, 0, 99, 0];
-        HAT_WEIGHTS[5] = [14, 28, 0, 42, 0, 56, 70, 84, 99, 0];
-        HAT_WEIGHTS[6] = [16, 0, 0, 0, 33, 49, 66, 83, 99, 0];
-        HAT_WEIGHTS[7] = [11, 22, 33, 44, 55, 66, 77, 88, 99, 0];
-
-        uint16[7] memory numbersFromDna = splitDna(dna);
-        uint8 shirt = _getTraitNumberFromWeightsArray(SHIRT_WEIGHTS, numbersFromDna[4]);
+        uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
+        uint8 shirt = _getTraitIndex(4, numbersFromDna[4], 0);
         string memory person = IWatchClubPersonRenderer(personRenderer).renderPerson(
-            IWatchClubPersonRenderer.HatType(_getTraitNumberFromWeightsArray(HAT_WEIGHTS[shirt], numbersFromDna[1])),
-            IWatchClubPersonRenderer.GlassesType(_getTraitNumberFromWeightsArray(GLASSES_WEIGHTS, numbersFromDna[2])),
-            IWatchClubPersonRenderer.EarType(_getTraitNumberFromWeightsArray(EAR_WEIGHTS, numbersFromDna[3])),
+            IWatchClubPersonRenderer.HatType(_getTraitIndex(1, numbersFromDna[1], shirt)),
+            IWatchClubPersonRenderer.GlassesType(_getTraitIndex(2, numbersFromDna[2], shirt)),
+            IWatchClubPersonRenderer.EarType(_getTraitIndex(3, numbersFromDna[3], shirt)),
             IWatchClubPersonRenderer.ShirtType(shirt),
-            IWatchClubPersonRenderer.MouthType(_getTraitNumberFromWeightsArray(MOUTH_WEIGHTS, numbersFromDna[5])),
-            IWatchClubPersonRenderer.BackgroundType(_getTraitNumberFromWeightsArray(BACKGROUND_WEIGHTS, numbersFromDna[6]))
+            IWatchClubPersonRenderer.MouthType(_getTraitIndex(5, numbersFromDna[5], shirt)),
+            IWatchClubPersonRenderer.BackgroundType(_getTraitIndex(6, numbersFromDna[6], shirt))
         );
         return person;
     }
 
     function renderScript(uint256 dna) public pure returns (string memory) {
-        uint16[7] memory numbersFromDna = splitDna(dna);
-        IWatchClubWatchRenderer.WatchType watchType = IWatchClubWatchRenderer.WatchType(_getWatchType(numbersFromDna[0]));
+        uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
+        IWatchClubWatchRenderer.WatchType watchType = IWatchClubWatchRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]));
 
         string memory watchZoomX;
         string memory watchZoomY;
@@ -224,6 +253,32 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         ));
     }
 
+    function getFormattedTraitsArray(uint256 dna) public view returns (string memory) {
+        string memory traits;
+        uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
+        uint8 shirt = _getTraitIndex(4, numbersFromDna[4], 0);
+        uint256 i;
+        for (; i < NUM_TRAITS; ) {
+            traits = string(abi.encodePacked(
+                traits,
+                '{ "trait_type": "',
+                IWatchClubTraitParser(traitParser).getCategoryName(i),
+                '", "value": "',
+                IWatchClubTraitParser(traitParser).getTraitName(i, _getTraitIndex(i, numbersFromDna[i], shirt)),
+                '" }'
+            ));
+
+            if (i != (NUM_TRAITS - 1))
+                traits = string(abi.encodePacked(traits, ","));
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        return string(abi.encodePacked("[ ", traits, " ]"));
+    }
+
     function tokenUriJson(uint256 tokenId, uint256 dna) public view returns (bytes memory) {
         string memory svg = renderSvg(dna);
         string memory script = renderScript(dna);
@@ -238,11 +293,11 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         return 
             abi.encodePacked(
             "{"
-            '"name": "WatchMfer ',
+            '"name": "watchmfer ',
             toString(tokenId),
             '",'
-            '"description": "description x",',
-            string(abi.encodePacked('"attributes": [ { "trait_type": "Type", "value": "Test" } ],')),
+            '"description": "watchmfers by 0xPATERSON",',
+            string(abi.encodePacked('"attributes": ', getFormattedTraitsArray(dna), ',')),
             '"animation_url": "data:text/html;base64,',
             encode(bytes(html)),
             '","image": "data:image/svg+xml;base64,',

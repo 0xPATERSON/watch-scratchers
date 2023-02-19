@@ -119,7 +119,7 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
         unchecked {
             uint256 i;
             for (; i < quantity; ) {
-                mint(currentSupply++, 0);
+                mint(++currentSupply, 0);
                 ++i;
             }
         }
@@ -138,7 +138,7 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
         if (MINT_PRICE_CHOOSE_WATCH != msg.value) revert PaymentAmountInvalid();
 
         unchecked {
-            mint(currentSupply++, watch);
+            mint(++currentSupply, watch);
         }
         _totalSupply = currentSupply;
     }
@@ -167,7 +167,8 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
             allowListMintCountPerAddress[msg.sender] += quantity;
             uint256 i;
             for (; i < quantity; ) {
-                mint(currentSupply++, 0);
+                // TODO: watch should not be hardcoded
+                mint(++currentSupply, 111);
                 ++i;
             }
         }
@@ -198,7 +199,7 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
         watchClubMintCountPerAddress[msg.sender] = 1;
 
         unchecked {
-            mint(currentSupply++, 0);
+            mint(++currentSupply, 0);
         }
 
         _totalSupply = currentSupply;
