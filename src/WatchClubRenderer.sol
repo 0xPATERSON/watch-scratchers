@@ -289,7 +289,6 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
             '</body></html>'
         ));
 
-        // TODO make metadata
         return 
             abi.encodePacked(
             "{"
