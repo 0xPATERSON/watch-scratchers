@@ -53,8 +53,10 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
+import "./interfaces/IWatchClubRenderer.sol";
 
-contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
+
+contract WatchClub is ERC721, Ownable, ReentrancyGuard {
     using ECDSA for bytes32;
     /*==============================================================
     ==                        Custom Errors                       ==
@@ -67,19 +69,15 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
     error MintNotAuthorized();
     error MintMaxSupplyReached();
     error PaymentAmountInvalid();
+    error InvalidWatch();
+    error DoesNotExist();
 
     event TickTickTickTick();
 
-    uint256 private constant MAX_SUPPLY = 5711;
+    uint256 private constant MAX_SUPPLY = 570;
     uint256 private constant MINT_PRICE = 0.04 ether;
     uint256 private constant MINT_PRICE_CHOOSE_WATCH = 0.08 ether;
-    uint256 private constant WATCH_CLUB_MINT_PRICE = 0.00 ether;
     uint256 private constant MAX_PER_ADDRESS = 5;
-
-    uint256 public constant BIT_MASK_LENGTH = 14;
-    uint256 public constant BIT_MASK = 2**BIT_MASK_LENGTH - 1;
-    // watch trait lies on the 9th slot
-    uint256 private constant WATCH_TRAIT_MULTIPLE = 9;
 
     // for pseudo-rng
     uint256 private _seed;
@@ -94,15 +92,13 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
     address public watchCoRenderer;
 
     // tokenId to dna
-    mapping(uint256 => uint256) public dna;
+    mapping(uint256 => uint256) public dnaRegistry;
 
     mapping(address => uint256) private allowListMintCountPerAddress;
-    mapping(address => uint256) private watchClubMintCountPerAddress;
 
-    constructor() ERC721("Watch Scratchers", "WATCH") {
+    constructor() ERC721("watchmfers", "WATCHMFERS") {
         emit TickTickTickTick();
     }
-
 
     /**
      * @notice public mint
@@ -136,6 +132,7 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
         if (!mintIsActive) revert MintNotActive();
         if (currentSupply + 1 > MAX_SUPPLY) revert MintMaxSupplyReached();
         if (MINT_PRICE_CHOOSE_WATCH != msg.value) revert PaymentAmountInvalid();
+        if (watch >= MAX_SUPPLY) revert InvalidWatch();
 
         unchecked {
             mint(++currentSupply, watch);
@@ -167,8 +164,19 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
             allowListMintCountPerAddress[msg.sender] += quantity;
             uint256 i;
             for (; i < quantity; ) {
-                // TODO: watch should not be hardcoded
-                mint(++currentSupply, 111);
+                uint256 tokenId = ++currentSupply;
+                // random watch between 0 and 569
+                uint256 watch = uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            tokenId,
+                            block.coinbase,
+                            block.timestamp,
+                            _seed++
+                        )
+                    )
+                ) % MAX_SUPPLY;
+                mint(tokenId, watch);
                 ++i;
             }
         }
@@ -176,39 +184,9 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
         _totalSupply = currentSupply;
     }
 
-    /**
-     * @notice azuki watch club mints for free. 1 per address.
-     * @param signature signature used for verification
-     */
-    function watchClubMint(bytes calldata signature) external payable {
-        uint256 currentSupply = _totalSupply;
-        if (tx.origin != msg.sender) revert CallerIsContract();
-        if (!allowListMintIsActive) revert MintNotActive();
-        if (currentSupply + 1 > MAX_SUPPLY) revert MintMaxSupplyReached();
-        if (msg.value != WATCH_CLUB_MINT_PRICE) revert PaymentAmountInvalid();
-        if (watchClubMintCountPerAddress[msg.sender] > 0) revert MintTooMany();
-
-        if (
-            !verify(
-                getMessageHash(msg.sender, 1, 0),
-                signature,
-                _allowlist_signer
-            )
-        ) revert InvalidSignature();
-
-        watchClubMintCountPerAddress[msg.sender] = 1;
-
-        unchecked {
-            mint(++currentSupply, 0);
-        }
-
-        _totalSupply = currentSupply;
-    }
-
-
     function mint(uint256 tokenId, uint256 watch) internal {
         unchecked {
-            dna[tokenId] = setDna(
+            dnaRegistry[tokenId] = setDna(
                 uint256(
                     keccak256(
                         abi.encodePacked(
@@ -225,22 +203,24 @@ contract EthereumWatchCo is ERC721, Ownable, ReentrancyGuard {
         _mint(msg.sender, tokenId);
     }
 
-    function tokenURI(uint256 _tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        if (!_exists(tokenId)) revert DoesNotExist();
+        if (watchCoRenderer == address(0)) return "";
+
+        return IWatchClubRenderer(watchCoRenderer).tokenURI(tokenId, dnaRegistry[tokenId]);
     }
 
-    function setDna(uint256 scrollDna, uint256 watch)
+    function setDna(uint256 dnaWithoutWatch, uint256 watch)
         internal
         pure
         returns (uint256)
     {
-        if (watch == 0) {
-          return scrollDna;
-        }
-        uint256 newBitMask = ~(BIT_MASK <<
-            (BIT_MASK_LENGTH * WATCH_TRAIT_MULTIPLE));
-        return
-            (scrollDna & newBitMask) |
-            (watch << (BIT_MASK_LENGTH * WATCH_TRAIT_MULTIPLE));
+        if (watch >= MAX_SUPPLY) revert InvalidWatch();
+        
+        uint256 dnaWithWatch;
+        // take out the last 3 digits and set the final 3 digits to watch (between 0 and 569)
+        dnaWithWatch = dnaWithoutWatch - (dnaWithoutWatch % 1000) + watch;
+        return dnaWithWatch;
     }
 
     /*==============================================================
