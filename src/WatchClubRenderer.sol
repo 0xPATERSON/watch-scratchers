@@ -279,12 +279,11 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         return string(abi.encodePacked("[ ", traits, " ]"));
     }
 
-    // @dev this is to test the html rendering, not actually used in main contract
-    function __tokenUriTest(uint256 dna) public view returns (string memory) {
+    function tokenUriHtml(uint256 dna) public view returns (string memory) {
         string memory svg = renderSvg(dna);
         string memory script = renderScript(dna);
         string memory html = string(abi.encodePacked(
-            '<html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;height:100vh;display:flex;justify-content:center;align-items:center;"> <div id="container">',
+            '<html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;height:100vh;display:flex;justify-content:center;align-items:center;"><div id="container">',
             svg,
             '</div>',
             script,
