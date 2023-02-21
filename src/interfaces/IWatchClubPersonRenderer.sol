@@ -17,4 +17,8 @@ interface IWatchClubPersonRenderer {
         MouthType mouthType, 
         BackgroundType backgroundType
     ) external view returns (string memory);
+
+    function getBackgroundColor(
+        BackgroundType backgroundType
+    ) external view returns (string memory);
 }

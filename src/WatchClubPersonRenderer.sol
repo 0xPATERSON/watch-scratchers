@@ -113,4 +113,10 @@ contract WatchClubPersonRenderer is Ownable, IWatchClubPersonRenderer {
             '</g>'
         ));
     }
+
+    function getBackgroundColor(
+        IWatchClubPersonRenderer.BackgroundType backgroundType
+    ) public view returns (string memory) {
+        return BACKGROUND_COLORS[uint256(backgroundType)];
+    }
 }

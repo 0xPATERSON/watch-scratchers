@@ -129,15 +129,15 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         }
     }
 
-    function renderWatchAndStyle(uint256 dna) public view returns (string[2] memory) {
+    function getWatchAndStyle(uint256 dna) public view returns (string[2] memory) {
         uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
         return IWatchClubWatchAndStyleRenderer(watchRenderer).renderWatchAndStyle(
             IWatchClubWatchAndStyleRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]))
         );
     }
 
-    // @dev this redundantly takes dna instead of separate traits as uint16 to avoid stack too deep
-    function renderPerson(uint256 dna) public view returns (string memory) {
+    // returns [person, background color hex (i.e. #AAAAAA)]
+    function getPersonAndBackgroundColor(uint256 dna) public view returns (string[2] memory) {
         uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
         uint8 shirt = _getTraitIndex(4, numbersFromDna[4], 0);
         string memory person = IWatchClubPersonRenderer(personRenderer).renderPerson(
@@ -148,7 +148,12 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
             IWatchClubPersonRenderer.MouthType(_getTraitIndex(5, numbersFromDna[5], shirt)),
             IWatchClubPersonRenderer.BackgroundType(_getTraitIndex(6, numbersFromDna[6], shirt))
         );
-        return person;
+        string[2] memory output;
+        output[0] = person;
+        output[1] = IWatchClubPersonRenderer(personRenderer).getBackgroundColor(
+            IWatchClubPersonRenderer.BackgroundType(_getTraitIndex(6, numbersFromDna[6], shirt)
+        ));
+        return output;
     }
 
     function renderScript(uint256 dna) public pure returns (string memory) {
@@ -239,18 +244,21 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
 
     function renderSvgAndStyle(uint256 dna) public view returns (string[2] memory) {
         string[2] memory output;
-        string memory person = renderPerson(dna);
-        string[2] memory watchAndStyle = renderWatchAndStyle(dna);
+        string[2] memory personAndBackgroundColor = getPersonAndBackgroundColor(dna);
+        string[2] memory watchAndStyle = getWatchAndStyle(dna);
 
-        string[2] memory svgParts;
-        svgParts[0] = '<svg height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg"> <g id="background"> <rect width="380" height="380" fill="#E5E4EB"/> </g> <g id="closeButton"><line x1="322.121" y1="19" x2="362.426" y2="59.3051" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/><line x1="322" y1="58.8787" x2="362.305" y2="18.5736" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/></g>';
-        svgParts[1] = '</svg>';
+        string[3] memory svgParts;
+        svgParts[0] = '<svg height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg"> <g id="background"> <rect width="380" height="380" fill="';
+        svgParts[1] = '"/> </g> <g id="closeButton"><line x1="322.121" y1="19" x2="362.426" y2="59.3051" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/><line x1="322" y1="58.8787" x2="362.305" y2="18.5736" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/></g>';
+        svgParts[2] = '</svg>';
         
         output[0] = string(abi.encodePacked(
             svgParts[0],
-            person,
+            personAndBackgroundColor[1],
+            svgParts[1],
+            personAndBackgroundColor[0],
             watchAndStyle[0],
-            svgParts[1]
+            svgParts[2]
         ));
         output[1] = watchAndStyle[1];
         return output;
