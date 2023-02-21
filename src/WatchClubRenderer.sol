@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "./interfaces/IWatchClubWatchRenderer.sol";
+import "./interfaces/IWatchClubWatchAndStyleRenderer.sol";
 import "./interfaces/IWatchClubRenderer.sol";
 import "./interfaces/IWatchClubPersonRenderer.sol";
 import "./interfaces/IWatchClubTraitParser.sol";
@@ -129,10 +129,10 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         }
     }
 
-    function renderWatch(uint256 dna) public view returns (string memory) {
+    function renderWatchAndStyle(uint256 dna) public view returns (string[2] memory) {
         uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
-        return IWatchClubWatchRenderer(watchRenderer).renderWatch(
-            IWatchClubWatchRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]))
+        return IWatchClubWatchAndStyleRenderer(watchRenderer).renderWatchAndStyle(
+            IWatchClubWatchAndStyleRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]))
         );
     }
 
@@ -153,59 +153,59 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
 
     function renderScript(uint256 dna) public pure returns (string memory) {
         uint16[NUM_TRAITS] memory numbersFromDna = splitDna(dna);
-        IWatchClubWatchRenderer.WatchType watchType = IWatchClubWatchRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]));
+        IWatchClubWatchAndStyleRenderer.WatchType watchType = IWatchClubWatchAndStyleRenderer.WatchType(_getWatchTraitIndex(numbersFromDna[0]));
 
         string memory watchZoomX;
         string memory watchZoomY;
         string memory handsZoomX;
         string memory handsZoomY;
 
-        if (watchType <= IWatchClubWatchRenderer.WatchType.PP_CHOCOLATE) {
+        if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.PP_CHOCOLATE) {
             watchZoomX = "172.3";
             watchZoomY = "170.55";
             handsZoomX = "179.65";
             handsZoomY = "180.75";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.AP_BLACK_CERAMIC) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.AP_BLACK_CERAMIC) {
             watchZoomX = "169";
             watchZoomY = "170";
             handsZoomX = "179.25";
             handsZoomY = "180";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.VC_BLUE_RG) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.VC_BLUE_RG) {
             watchZoomX = "171.5";
             watchZoomY = "170.5";
             handsZoomX = "179.2";
             handsZoomY = "180.25";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.YACHT_BLUE) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.YACHT_BLUE) {
             watchZoomX = "170.75";
             watchZoomY = "170.5";
             handsZoomX = "178.25";
             handsZoomY = "179.75";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.EXP_TT) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.EXP_TT) {
             watchZoomX = "171.5";
             watchZoomY = "170.5";
             handsZoomX = "178.25";
             handsZoomY = "179.75";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.DD_OLIVE_P) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.DD_OLIVE_P) {
             watchZoomX = "171";
             watchZoomY = "170.5";
             handsZoomX = "178.25";
             handsZoomY = "179.75";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.AQ_BLACK) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.AQ_BLACK) {
             watchZoomX = "171.6";
             watchZoomY = "170.25";
             handsZoomX = "177.9";
             handsZoomY = "179.2";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.SENATOR) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.SENATOR) {
             watchZoomX = "172";
             watchZoomY = "168.75";
             handsZoomX = "178.65";
             handsZoomY = "179.25";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.GS) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.GS) {
             watchZoomX = "171.5";
             watchZoomY = "170";
             handsZoomX = "177.8";
             handsZoomY = "179.25";
-        } else if (watchType <= IWatchClubWatchRenderer.WatchType.TANK_YG) {
+        } else if (watchType <= IWatchClubWatchAndStyleRenderer.WatchType.TANK_YG) {
             watchZoomX = "174.5";
             watchZoomY = "170";
             handsZoomX = "182";
@@ -237,20 +237,23 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         ));
     }
 
-    function renderSvg(uint256 dna) public view returns (string memory) {
+    function renderSvgAndStyle(uint256 dna) public view returns (string[2] memory) {
+        string[2] memory output;
         string memory person = renderPerson(dna);
-        string memory watch = renderWatch(dna);
+        string[2] memory watchAndStyle = renderWatchAndStyle(dna);
 
         string[2] memory svgParts;
         svgParts[0] = '<svg height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg"> <g id="background"> <rect width="380" height="380" fill="#E5E4EB"/> </g> <g id="closeButton"><line x1="322.121" y1="19" x2="362.426" y2="59.3051" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/><line x1="322" y1="58.8787" x2="362.305" y2="18.5736" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/></g>';
         svgParts[1] = '</svg>';
         
-        return string(abi.encodePacked(
+        output[0] = string(abi.encodePacked(
             svgParts[0],
             person,
-            watch,
+            watchAndStyle[0],
             svgParts[1]
         ));
+        output[1] = watchAndStyle[1];
+        return output;
     }
 
     function getFormattedTraitsArray(uint256 dna) public view returns (string memory) {
@@ -280,12 +283,13 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     }
 
     function tokenUriHtml(uint256 dna) public view returns (string memory) {
-        string memory svg = renderSvg(dna);
+        string[2] memory svgAndStyle = renderSvgAndStyle(dna);
         string memory script = renderScript(dna);
         string memory html = string(abi.encodePacked(
             '<html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;height:100vh;display:flex;justify-content:center;align-items:center;"><div id="container">',
-            svg,
+            svgAndStyle[0],
             '</div>',
+            svgAndStyle[1],
             script,
             '</body></html>'
         ));
@@ -293,12 +297,13 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     }
 
     function tokenUriJson(uint256 tokenId, uint256 dna) public view returns (bytes memory) {
-        string memory svg = renderSvg(dna);
+        string[2] memory svgAndStyle = renderSvgAndStyle(dna);
         string memory script = renderScript(dna);
         string memory html = string(abi.encodePacked(
             '<html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;height:100vh;display:flex;justify-content:center;align-items:center;"> <div id="container">',
-            svg,
+            svgAndStyle[0],
             '</div>',
+            svgAndStyle[1],
             script,
             '</body></html>'
         ));
@@ -306,7 +311,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         return 
             abi.encodePacked(
             "{"
-            '"name": "watchmfer ',
+            '"name": "watchmfer #',
             toString(tokenId),
             '",'
             '"description": "watchmfers by 0xPATERSON",',
@@ -314,7 +319,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
             '"animation_url": "data:text/html;base64,',
             encode(bytes(html)),
             '","image": "data:image/svg+xml;base64,',
-            encode(bytes(svg)),
+            encode(bytes(svgAndStyle[0])),
             '"}'
         );
     }

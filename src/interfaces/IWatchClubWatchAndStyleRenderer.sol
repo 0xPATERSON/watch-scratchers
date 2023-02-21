@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IWatchClubWatchRenderer {
+interface IWatchClubWatchAndStyleRenderer {
     enum WatchType { 
         // 0
         PP_TIFFANY, PP_BLUE, PP_GREEN, PP_WHITE, PP_CHOCOLATE,
@@ -35,9 +35,10 @@ interface IWatchClubWatchRenderer {
         TANK_F, TANK_F_RG, TANK_F_YG
     }
 
-    function renderWatch(WatchType watchType)
+    // returns [watch, style]
+    function renderWatchAndStyle(WatchType watchType)
         external
         view
-        returns (string memory);
+        returns (string[2] memory);
         
 }

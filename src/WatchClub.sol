@@ -210,7 +210,7 @@ contract WatchClub is ERC721, Ownable, ReentrancyGuard {
     }
 
     function setDna(uint256 dnaWithoutWatch, uint256 watch)
-        internal
+        public
         pure
         returns (uint256)
     {
