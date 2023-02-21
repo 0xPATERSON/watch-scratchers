@@ -120,7 +120,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         } else if (handType == IWatchClubHandsRenderer.HandType.DAUPHINE) {
             svgParts[5] = '.hour-hand { animation: rotateHourHand 216000s linear infinite; } .hand-inner { color: var(--color-hand-inner); fill: var(--color-hand-inner); } .hand-outer { stroke: var(--color-hand-outer); fill: var(--color-hand-outer); } .minute-hand { animation: rotateMinuteHand 3600s linear infinite; } .second-hand { color: var(--color-accent); stroke-width: 2px; animation: rotateSecondHand 60s linear infinite; } </style> ';
         } else {
-            svgParts[5] = '.hour-hand { animation: rotateHourHand 216000s linear infinite; } .hand-outer { stroke-width: 5px; color: var(--color-hand-outer); } .hand-inner { stroke-width: 2.5px; color: var(--color-hand-inner); } .minute-hand { animation: rotateMinuteHand 3600s linear infinite; } .second-hand { color: var(--color-accent); stroke-width: 2px; animation: rotateSecondHand 60s linear infinite; } </style>';
+            svgParts[5] = '.hour-hand { animation: rotateHourHand 216000s linear infinite; } .hand-outer { stroke-width: 5px; color: var(--color-hand-outer); } .hand-inner { stroke-width: 2.5px; color: var(--color-hand-inner); } .minute-hand { animation: rotateMinuteHand 3600s linear infinite; } .second-hand { color: var(--color-accent); stroke-width: 2px; animation: rotateSecondHand 60s linear infinite; } </style> ';
         }
 
         return string(abi.encodePacked(

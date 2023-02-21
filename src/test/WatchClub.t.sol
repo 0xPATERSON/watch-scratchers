@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 
-contract WatchClubTraitParserTest is DSTest {
+contract WatchClubTest is DSTest {
 
     WatchClub watchClub = new WatchClub();
 
@@ -25,7 +25,7 @@ contract WatchClubTraitParserTest is DSTest {
                 )
             )
         ) % 570;
-        emit log(Strings.toString(watchDna));
+        // emit log(Strings.toString(watchDna));
         uint256 actualOutput = watchClub.setDna(dnaWithoutWatch, watchDna);
         assertEq(actualOutput % 1000, watchDna);
     }
