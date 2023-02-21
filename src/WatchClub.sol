@@ -87,7 +87,6 @@ contract WatchClub is ERC721, Ownable, ReentrancyGuard {
     address private _watch_club_signer;
     bool public mintIsActive;
     bool public allowListMintIsActive;
-    bool public watchClubMintIsActive;
 
     address public watchCoRenderer;
 
@@ -241,10 +240,6 @@ contract WatchClub is ERC721, Ownable, ReentrancyGuard {
 
     function flipAllowListMint() external onlyOwner {
         allowListMintIsActive = !allowListMintIsActive;
-    }
-
-    function flipWatchClubMint() external onlyOwner {
-        watchClubMintIsActive = !watchClubMintIsActive;
     }
 
     function setSeed(uint256 seed) external onlyOwner {
