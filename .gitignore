@@ -1,0 +1,10 @@
+.DS_Store
+.env
+broadcast/
+cache/
+dotjot.txt
+lib/ERC721A/
+lib/ds-test/
+lib/openzeppelin-contracts/
+out/
+src/scripts/
