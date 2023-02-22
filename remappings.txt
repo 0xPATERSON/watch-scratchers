@@ -1,3 +1,2 @@
-ERC721A/=lib/ERC721A/
 ds-test/=lib/ds-test/src/
 @openzeppelin=lib/openzeppelin-contracts/
