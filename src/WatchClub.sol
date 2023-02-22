@@ -50,13 +50,12 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "./interfaces/IWatchClubRenderer.sol";
 
 
-contract WatchClub is ERC721, Ownable, ReentrancyGuard {
+contract WatchClub is ERC721, Ownable{
     using ECDSA for bytes32;
     /*==============================================================
     ==                        Custom Errors                       ==
@@ -114,7 +113,19 @@ contract WatchClub is ERC721, Ownable, ReentrancyGuard {
         unchecked {
             uint256 i;
             for (; i < quantity; ) {
-                mint(++currentSupply, 0);
+                uint256 tokenId = ++currentSupply;
+                // random watch between 0 and 569
+                uint256 watch = uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            tokenId,
+                            block.coinbase,
+                            block.timestamp,
+                            _seed++
+                        )
+                    )
+                ) % MAX_SUPPLY;
+                mint(tokenId, watch);
                 ++i;
             }
         }
@@ -179,7 +190,6 @@ contract WatchClub is ERC721, Ownable, ReentrancyGuard {
                 ++i;
             }
         }
-
         _totalSupply = currentSupply;
     }
 
