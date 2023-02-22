@@ -7,7 +7,6 @@ import "./interfaces/IWatchClubCaseRenderer.sol";
 import "./interfaces/IWatchClubHandsRenderer.sol";
 import "./interfaces/IWatchClubWatchAndStyleRenderer.sol";
 
-// TODO: update function visibilities
 
 contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRenderer {
     constructor() {}
@@ -49,7 +48,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
 }
 
     // Replaces all occurances of _oldValue with _newValue in _string. _oldValue and _newValue will always be length 7.
-    function _colorReplace(string memory _string, IWatchClubWatchAndStyleRenderer.WatchType watchType) public view returns (string memory) {
+    function colorReplace(string memory _string, IWatchClubWatchAndStyleRenderer.WatchType watchType) public view returns (string memory) {
         bytes memory _stringBytes = bytes(_string);
         bytes memory resultBytes = new bytes(_stringBytes.length);
         
@@ -141,7 +140,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.PP]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.PP);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1900 1900', '157.85', '310.7', IWatchClubHandsRenderer.HandType.TRINITY);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.PP_TIFFANY || watchType == IWatchClubWatchAndStyleRenderer.WatchType.PP_WHITE) {
@@ -166,7 +165,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.AP]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.AP);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '156.9', '309.8', IWatchClubHandsRenderer.HandType.TRINITY);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.AP_WHITE || watchType == IWatchClubWatchAndStyleRenderer.WatchType.AP_BLUE || watchType == IWatchClubWatchAndStyleRenderer.WatchType.AP_GREY || watchType == IWatchClubWatchAndStyleRenderer.WatchType.AP_BLACK) {
@@ -189,7 +188,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.VC]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.VC);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1800 1800', '157.5', '310.3', IWatchClubHandsRenderer.HandType.ROUND);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.VC_BLUE || watchType == IWatchClubWatchAndStyleRenderer.WatchType.VC_BLACK) {
@@ -214,7 +213,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.SUB]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.SUB);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.6', '309.3', IWatchClubHandsRenderer.HandType.SPORT);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.SUB_BLACK_TT || watchType == IWatchClubWatchAndStyleRenderer.WatchType.SUB_BLUE_TT || watchType == IWatchClubWatchAndStyleRenderer.WatchType.SUB_BLACK_YG || watchType == IWatchClubWatchAndStyleRenderer.WatchType.SUB_BLUE_YG) {
@@ -237,7 +236,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.YACHT]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.YACHT);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.6', '309.3', IWatchClubHandsRenderer.HandType.SPORT);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.YACHT_BLUE) {
@@ -288,7 +287,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
                 style = _renderStyle(IWatchClubHandsRenderer.HandType.SPORT, '#E4E4E4', '#E4E4E4', '#F7FDFA');
             }
         }
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
     
         string[2] memory output;
         output[0] = string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));
@@ -311,7 +310,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
                 caseRenderers[IWatchClubCaseRenderer.CaseType.DD]
             ).renderSvg(IWatchClubCaseRenderer.CaseType.DD);
         }
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1650 1650', '156', '308.8', IWatchClubHandsRenderer.HandType.DRESS_DD);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.DD_OLIVE_P) {
@@ -338,7 +337,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.AQ]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.AQ);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1630 1630', '156.5', '308.9', IWatchClubHandsRenderer.HandType.AQUA);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.AQ_WHITE) {
@@ -363,7 +362,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
         string memory watchCase = IWatchClubCaseRenderer(
             caseRenderers[IWatchClubCaseRenderer.CaseType.PILOT]
         ).renderSvg(IWatchClubCaseRenderer.CaseType.PILOT);
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
         string memory watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 1700 1700', '156.7', '309.25', IWatchClubHandsRenderer.HandType.PILOT);
         string memory style;
         if (watchType == IWatchClubWatchAndStyleRenderer.WatchType.PILOT_WHITE) {
@@ -403,7 +402,7 @@ contract WatchClubWatchAndStyleRenderer is Ownable, IWatchClubWatchAndStyleRende
             watchHands = IWatchClubHandsRenderer(watchHandsRenderer).renderHands('0 0 2800 2800', '158.5', '313.25', IWatchClubHandsRenderer.HandType.TANK_F);
             style = _renderStyle(IWatchClubHandsRenderer.HandType.TANK_F, '#1C55B4', '#1C55B4', '#1C55B4');
         }
-        string memory coloredWatchCase = _colorReplace(watchCase, watchType);
+        string memory coloredWatchCase = colorReplace(watchCase, watchType);
 
         string[2] memory output;
         output[0] = string(abi.encodePacked(caseSvgStart, coloredWatchCase, caseSvgEnd, watchHands));

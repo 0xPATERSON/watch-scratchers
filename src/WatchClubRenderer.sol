@@ -8,7 +8,6 @@ import "./interfaces/IWatchClubRenderer.sol";
 import "./interfaces/IWatchClubPersonRenderer.sol";
 import "./interfaces/IWatchClubTraitParser.sol";
 
-// TODO: update function visibilities
 
 contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     error TraitNotFound();
@@ -34,7 +33,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
     }
 
     // @dev __shirtTraitIndex is not used unless the category is 1
-    function _getTraitIndex(uint256 category, uint16 numberFromDna, uint8 __shirtTraitIndex) public pure returns (uint8) {
+    function _getTraitIndex(uint256 category, uint16 numberFromDna, uint8 __shirtTraitIndex) private pure returns (uint8) {
         if (category == 0) {
             return _getWatchTraitIndex(numberFromDna);
         }
@@ -83,7 +82,7 @@ contract WatchClubRenderer is Ownable, IWatchClubRenderer {
         revert TraitNotFound();
     }
 
-    function _getWatchTraitIndex(uint16 numberFromDna) public pure returns (uint8) {
+    function _getWatchTraitIndex(uint16 numberFromDna) private pure returns (uint8) {
         uint16[64] memory WATCH_WEIGHTS = [
             2, 8, 14, 20, 25,  // PP
             31, 37, 43, 49, 54, 59, 62,  // AP

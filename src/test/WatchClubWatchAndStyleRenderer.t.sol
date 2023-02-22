@@ -23,37 +23,37 @@ contract WatchClubWatchAndStyleRendererTest is DSTest {
 
     // color replace helper test
     function testColorReplaceHappyTrailing() public {
-        string memory actualOutput = testRenderer._colorReplace("123#88E3DE", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
+        string memory actualOutput = testRenderer.colorReplace("123#88E3DE", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
         string memory expectedOutput = "123#465941";
         assertEq(keccak256(abi.encodePacked(actualOutput)), keccak256(abi.encodePacked(expectedOutput)));
     }
 
     function testColorReplaceHappyStarting() public {
-        string memory actualOutput = testRenderer._colorReplace("#88E3DE123", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
+        string memory actualOutput = testRenderer.colorReplace("#88E3DE123", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
         string memory expectedOutput = "#465941123";
         assertEq(keccak256(abi.encodePacked(actualOutput)), keccak256(abi.encodePacked(expectedOutput)));
     }
 
     function testColorReplaceHappyOnly() public {
-        string memory actualOutput = testRenderer._colorReplace("#88E3DE#041418#041418", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
+        string memory actualOutput = testRenderer.colorReplace("#88E3DE#041418#041418", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
         string memory expectedOutput = "#465941#B4B8B2#B4B8B2";
         assertEq(keccak256(abi.encodePacked(actualOutput)), keccak256(abi.encodePacked(expectedOutput)));
     }
 
     function testColorReplaceNone() public {
-        string memory actualOutput = testRenderer._colorReplace("#88E3DA#04AA18#041AA8", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
+        string memory actualOutput = testRenderer.colorReplace("#88E3DA#04AA18#041AA8", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
         string memory expectedOutput = "#88E3DA#04AA18#041AA8";
         assertEq(keccak256(abi.encodePacked(actualOutput)), keccak256(abi.encodePacked(expectedOutput)));
     }
 
     function testColorReplaceHappyNoneShort() public {
-        string memory actualOutput = testRenderer._colorReplace("#88", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
+        string memory actualOutput = testRenderer.colorReplace("#88", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
         string memory expectedOutput = "#88";
         assertEq(keccak256(abi.encodePacked(actualOutput)), keccak256(abi.encodePacked(expectedOutput)));
     }
 
     function testColorReplaceHappyNoneEmptyString() public {
-        string memory actualOutput = testRenderer._colorReplace("", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
+        string memory actualOutput = testRenderer.colorReplace("", IWatchClubWatchAndStyleRenderer.WatchType.PP_GREEN);
         string memory expectedOutput = "";
         assertEq(keccak256(abi.encodePacked(actualOutput)), keccak256(abi.encodePacked(expectedOutput)));
     }

@@ -49,26 +49,26 @@ contract WatchClubRendererTest is DSTest {
         }
     }
 
-    function testGetTrait() public {
-        uint16[7] memory test_dna_split = [555,73,32,41,32,12,10];
-        // glasses
-        assertEq(testRenderer._getTraitIndex(2, test_dna_split[2], 0), 1);
-        // earphones
-        assertEq(testRenderer._getTraitIndex(3, test_dna_split[3], 0), 1);
-        // shirt
-        assertEq(testRenderer._getTraitIndex(4, test_dna_split[4], 0), 2);
-        // mouth
-        assertEq(testRenderer._getTraitIndex(5, test_dna_split[5], 0), 0);
-        // background
-        assertEq(testRenderer._getTraitIndex(6, test_dna_split[6], 0), 0);
-        // hat (with shirt index 2)
-        assertEq(testRenderer._getTraitIndex(1, test_dna_split[1], 2), 6);
-    }
+    // function testGetTrait() public {
+    //     uint16[7] memory test_dna_split = [555,73,32,41,32,12,10];
+    //     // glasses
+    //     assertEq(testRenderer._getTraitIndex(2, test_dna_split[2], 0), 1);
+    //     // earphones
+    //     assertEq(testRenderer._getTraitIndex(3, test_dna_split[3], 0), 1);
+    //     // shirt
+    //     assertEq(testRenderer._getTraitIndex(4, test_dna_split[4], 0), 2);
+    //     // mouth
+    //     assertEq(testRenderer._getTraitIndex(5, test_dna_split[5], 0), 0);
+    //     // background
+    //     assertEq(testRenderer._getTraitIndex(6, test_dna_split[6], 0), 0);
+    //     // hat (with shirt index 2)
+    //     assertEq(testRenderer._getTraitIndex(1, test_dna_split[1], 2), 6);
+    // }
 
-    function testGetWatchType() public {
-        // watch is 555: TANK_RG
-        assertEq(testRenderer._getTraitIndex(0, 555, 0), 59);
-    }
+    // function testGetWatchType() public {
+    //     // watch is 555: TANK_RG
+    //     assertEq(testRenderer._getTraitIndex(0, 555, 0), 59);
+    // }
 
     function testRenderScript() public {
         // watch is 555: TANK_RG
